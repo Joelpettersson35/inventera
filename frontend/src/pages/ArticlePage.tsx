@@ -81,7 +81,7 @@ export default function ArticlePage() {
         to="/"
         className="text-lg font-semibold text-[#001C89] hover:underline"
       >
-        ← Alla artiklar
+        <span className="text-2xl">←</span> Alla artiklar
       </Link>
 
       <h2 className="mt-6 text-2xl font-semibold">{article.name}</h2>
