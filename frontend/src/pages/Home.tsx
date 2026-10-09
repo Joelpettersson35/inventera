@@ -27,6 +27,8 @@ export default function Home() {
           </li>
         ))}
       </ul>
+
+      <button className="fixed bottom-4 left-1/2 -translate-x-1/2 p-4 rounded-full bg-[#001C89] text-white">Scanna QR</button>
     </section>
   );
 }
