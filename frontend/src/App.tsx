@@ -3,6 +3,9 @@ import { Route, Routes } from "react-router";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import ArticlePage from "./pages/ArticlePage";
+import Settings from "./pages/Settings";
+import Create from "./pages/Create";
+import NoQrLayout from "./layouts/NoQrLayout";
 
 function App() {
   return (
@@ -10,6 +13,10 @@ function App() {
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="articles/:id" element={<ArticlePage />} />
+      </Route>
+      <Route element={<NoQrLayout />}>
+        <Route path="create" element={<Create />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   );
