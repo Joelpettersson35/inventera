@@ -40,7 +40,14 @@ export default function Navigation() {
           onClick={() => setIsOpen(false)}
           className="px-3 py-2 hover:bg-gray-100 w-56"
         >
-          Skapa och ta bort
+          Skapa artikel
+        </Link>
+        <Link
+          to="/categories"
+          onClick={() => setIsOpen(false)}
+          className="px-3 py-2 hover:bg-gray-100 w-56"
+        >
+          Hantera kategorier
         </Link>
         <Link
           to="/settings"

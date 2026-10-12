@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import ArticlePage from "./pages/ArticlePage";
 import Settings from "./pages/Settings";
 import Create from "./pages/Create";
+import Categories from "./pages/Categories";
 import NoQrLayout from "./layouts/NoQrLayout";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       </Route>
       <Route element={<NoQrLayout />}>
         <Route path="create" element={<Create />} />
+        <Route path="categories" element={<Categories />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>

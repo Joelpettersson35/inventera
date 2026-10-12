@@ -3,12 +3,7 @@ import CategoryScroller from "../components/CategoryScroller";
 import { categories } from "../data/categories";
 import { createArticle } from "../api/articles";
 import Message from "../components/Message";
-import { type MessageType } from "../components/Message";
-
-type Feedback = {
-  type: MessageType;
-  message: string;
-};
+import { type Feedback } from "../types/Feedback";
 
 export default function Create() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
