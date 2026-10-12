@@ -13,7 +13,7 @@ export default function CategoryForm() {
       <form
         onSubmit={handleCreate}
         onReset={handleClear}
-        className="flex w-full flex-wrap justify-center gap-y-3"
+        className="flex w-full flex-wrap justify-center gap-y-4"
       >
         <h2 className="text-2xl mt-4 font-bold">Hantera kategorier</h2>
         <div className="flex w-full justify-center items-center gap-x-2">
@@ -25,6 +25,15 @@ export default function CategoryForm() {
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
+        </div>
+
+        <div className="flex w-full justify-center">
+          <button
+            type="button"
+            className="px-2 border-2 font-semibold border-[#001C89] rounded-2xl text-[#001C89]"
+          >
+            Nytt fält +
+          </button>
         </div>
 
         <div className=" flex gap-x-2">
