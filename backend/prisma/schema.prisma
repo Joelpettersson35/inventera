@@ -10,9 +10,10 @@ datasource db {
 }
 
 model Category {
-  id       String    @id @default(uuid())
-  name     String    @unique
+  id       String          @id @default(uuid())
+  name     String          @unique
   articles Article[]
+  fields   CategoryField[]
 }
 
 model Article {
@@ -22,6 +23,27 @@ model Article {
   description String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id]) //fields är denna modellens fält som ska kopplas till references vilket är den främmande modellens fält (id)
+
+  attributes Json @default("{}")
+
+  @@index([categoryId])
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  BOOLEAN
+}
+
+model CategoryField {
+  id       String    @id @default(uuid())
+  label    String
+  type     FieldType
+  required Boolean   @default(false)
+  position Int       @default(0)
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
