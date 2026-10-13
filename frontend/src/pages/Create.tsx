@@ -79,13 +79,22 @@ export default function Create() {
   }
 
   return (
-    <div className="flex flex-col w-full gap-2">
+    <div className="flex justify-center flex-col w-full gap-2">
       <form
         onSubmit={handleCreate}
         onReset={handleClear}
         className="flex w-full flex-wrap justify-center gap-y-3"
       >
-        <h2 className="text-2xl mt-4 font-bold">Skapa artikel</h2>
+        <h2 className="text-2xl text-center w-full mt-4 font-bold">Skapa artikel</h2>
+                
+        <h3 className="text-lg">Välj kategori:</h3>
+        <div className="w-full px-3">
+          <CategoryScroller
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </div>
         <div className="flex w-full justify-center items-center gap-x-2">
           <label htmlFor="name">Namn: </label>
           <input
@@ -107,14 +116,6 @@ export default function Create() {
             onChange={(event) => setQuantity(event.target.value)}
             className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
             autoFocus
-          />
-        </div>
-        <h3 className="text-lg">Välj kategori:</h3>
-        <div className="w-full px-3">
-          <CategoryScroller
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
           />
         </div>
 

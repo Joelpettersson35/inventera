@@ -1,10 +1,24 @@
 import { useState } from "react";
 import Message from "./Message";
 import type { Feedback } from "../types/Feedback";
+import { type CategoryField } from "../types/CategoryField";
 
 export default function CategoryForm() {
   const [name, setName] = useState("");
+  const [label, setLabel] = useState("");
+  const [value, setValue] = useState("");
+  const [required, setRequired] = useState(false);
+  const customFields: CategoryField[] = [];
+
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  function addField(){
+    return(
+      <div>
+        <label htmlFor=""></label>
+      </div>
+    );
+  };
 
   function handleCreate() {}
   function handleClear() {}
