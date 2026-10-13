@@ -1,37 +1,36 @@
 import { useState } from "react";
 import Message from "./Message";
 import type { Feedback } from "../types/Feedback";
-import { type CategoryField } from "../types/CategoryField";
+import {
+  type CategoryField,
+  type CategoryFieldDraft,
+} from "../types/CategoryField";
 
 export default function CategoryForm() {
   const [name, setName] = useState("");
-  const [label, setLabel] = useState("");
-  const [value, setValue] = useState("");
-  const [required, setRequired] = useState(false);
-  const customFields: CategoryField[] = [];
+  const [fields, setFields] = useState<CategoryField[]>([]);
 
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
-  function addField(){
-    return(
-      <div>
-        <label htmlFor=""></label>
-      </div>
-    );
-  };
+  function handleAddField(field: CategoryField) {
+    const newField: CategoryFieldDraft = {
+      ...field,
+      id: crypto.randomUUID(),
+    };
 
-  function handleCreate() {}
+    setFields((current) => [...current, newField]);
+  }
+
   function handleClear() {}
   return (
     <div className="flex flex-col w-full gap-2">
       <form
-        onSubmit={handleCreate}
         onReset={handleClear}
         className="flex w-full flex-wrap justify-center gap-y-4"
       >
         <h2 className="text-2xl mt-4 font-bold">Hantera kategorier</h2>
         <div className="flex w-full justify-center items-center gap-x-2">
-          <label htmlFor="name">Namn: </label>
+          <label htmlFor="name">Kategorinamn: </label>
           <input
             type="text"
             id="name"
@@ -44,7 +43,7 @@ export default function CategoryForm() {
         <div className="flex w-full justify-center">
           <button
             type="button"
-            className="px-2 border-2 font-semibold border-[#001C89] rounded-2xl text-[#001C89]"
+            className="px-2 border-2 font-semibold text-white rounded-xl bg-[#001C89]"
           >
             Nytt fält +
           </button>

@@ -1,6 +1,9 @@
-
 export type CategoryField = {
-    label: String,
-    value: String,
-    required: boolean
-}
+  label: string;
+  type: "TEXT" | "NUMBER" | "BOOLEAN";
+  required: boolean;
+};
+
+export type CategoryFieldDraft = CategoryField & {
+  id: string;
+};
