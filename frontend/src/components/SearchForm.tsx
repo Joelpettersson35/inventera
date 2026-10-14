@@ -1,9 +1,10 @@
+import type { Category } from "../types/Category";
 import CategoryScroller from "./CategoryScroller";
 
 type ArticleFiltersProps = {
-  categories: string[];
-  selectedCategory: string | null;
-  onCategoryChange: (category: string | null) => void;
+  categories: Category[];
+  selectedCategory: Category | null;
+  onCategoryChange: (category: Category | null) => void;
 };
 
 export default function SearchForm({

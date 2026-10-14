@@ -1,5 +1,8 @@
 import Fastify from "fastify";
 import { prisma } from "./lib/prisma.js";
+import cors from "@fastify/cors";
+import articleRoutes from "./routes/article.js";
+import categoryRoutes from "./routes/category.js";
 
 const app = Fastify({
   logger:
@@ -27,12 +30,21 @@ app.get("/api/health", async () => {
   };
 });
 
-app.get("/api/categories", async () => {
-  return prisma.category.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
+await app.register(cors, {
+  origin: [
+  "http://localhost:5173",
+  "http://192.168.1.153:5173",
+  "http://192.168.1.83:5173",
+],
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+});
+
+await app.register(categoryRoutes, {
+  prefix: "/api",
+});
+
+await app.register(articleRoutes, {
+  prefix: "/api",
 });
 
 app.addHook("onClose", async () => {
@@ -43,7 +55,7 @@ async function start() {
   try {
     await app.listen({
       port: 3000,
-      host: "127.0.0.1",
+      host: "0.0.0.0",
     });
   } catch (error) {
     app.log.error(error);

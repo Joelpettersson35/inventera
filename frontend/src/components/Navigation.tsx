@@ -31,28 +31,28 @@ export default function Navigation() {
         <Link
           to="/"
           onClick={() => setIsOpen(false)}
-          className="px-3 py-2 hover:bg-gray-100 w-56"
+          className="px-3 py-2 hover:bg-gray-100 w-56  md:hover:bg-white md:hover:underline"
         >
           Hem
         </Link>
         <Link
           to="/create"
           onClick={() => setIsOpen(false)}
-          className="px-3 py-2 hover:bg-gray-100 w-56"
+          className="px-3 py-2 hover:bg-gray-100 w-56 md:hover:bg-white md:hover:underline"
         >
           Skapa artikel
         </Link>
         <Link
           to="/categories"
           onClick={() => setIsOpen(false)}
-          className="px-3 py-2 hover:bg-gray-100 w-56"
+          className="px-3 py-2 hover:bg-gray-100 w-56  md:hover:bg-white md:hover:underline"
         >
           Hantera kategorier
         </Link>
         <Link
           to="/settings"
           onClick={() => setIsOpen(false)}
-          className="px-3 py-2 hover:bg-gray-100 w-56"
+          className="px-3 py-2 hover:bg-gray-100 w-56  md:hover:bg-white md:hover:underline"
         >
           Inställningar
         </Link>

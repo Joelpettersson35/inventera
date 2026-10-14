@@ -1,15 +1,21 @@
 import { useState, type SubmitEvent } from "react";
 import CategoryScroller from "../components/CategoryScroller";
-import { categories } from "../data/categories";
+//import { categories } from "../data/categories";
 import { createArticle } from "../api/articles";
 import Message from "../components/Message";
 import { type Feedback } from "../types/Feedback";
+import type { Category } from "../types/Category";
+import useCategories from "../hooks/useCategories";
 
 export default function Create() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [description, setDescription] = useState("");
+
+  const { categories, isLoading, error } = useCategories();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -85,8 +91,10 @@ export default function Create() {
         onReset={handleClear}
         className="flex w-full flex-wrap justify-center gap-y-3"
       >
-        <h2 className="text-2xl text-center w-full mt-4 font-bold">Skapa artikel</h2>
-                
+        <h2 className="text-2xl text-center w-full mt-4 font-bold">
+          Skapa artikel
+        </h2>
+
         <h3 className="text-lg">Välj kategori:</h3>
         <div className="w-full px-3">
           <CategoryScroller

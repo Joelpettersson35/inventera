@@ -43,7 +43,6 @@ model CategoryField {
   label    String
   type     FieldType
   required Boolean   @default(false)
-  position Int       @default(0)
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])

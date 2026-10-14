@@ -5,5 +5,11 @@ export type CategoryField = {
 };
 
 export type CategoryFieldDraft = CategoryField & {
-  id: string;
+  id: number;
 };
+
+export type Category = {
+    id: string
+    name: string;
+    fields: CategoryField[]
+}

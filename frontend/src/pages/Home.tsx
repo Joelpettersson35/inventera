@@ -3,10 +3,15 @@ import ListItem from "../components/ListItem";
 import qrcode from "../assets/qr-code.png";
 import SearchForm from "../components/SearchForm";
 import { useState } from "react";
-import { categories } from "../data/categories";
+//import { categories } from "../data/categories";
+import useCategories from "../hooks/useCategories";
+import type { Category } from "../types/Category";
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const { categories, isLoading, error } = useCategories();
   return (
     <section className="flex flex-col w-full p-3">
       <SearchForm

@@ -1,36 +1,62 @@
-import { useState } from "react";
+import { useState, useRef, type SubmitEvent } from "react";
 import Message from "./Message";
 import type { Feedback } from "../types/Feedback";
 import {
+  type Category,
   type CategoryField,
   type CategoryFieldDraft,
-} from "../types/CategoryField";
+} from "../types/Category";
+import CategoryFieldDialog from "./CategoryFieldDialog";
+import FieldItem from "./FieldItem";
 
-export default function CategoryForm() {
+type CategoryFormProps = {
+  onCreate: (category: Omit<Category, "id">) => void;
+};
+
+export default function CategoryForm({ onCreate }: CategoryFormProps) {
   const [name, setName] = useState("");
   const [fields, setFields] = useState<CategoryField[]>([]);
 
+  const [pendingAction, setPendingAction] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const newFieldId = useRef(0);
 
   function handleAddField(field: CategoryField) {
+    //lägger till ett id för på det nya fältet
     const newField: CategoryFieldDraft = {
       ...field,
-      id: crypto.randomUUID(),
+      id: newFieldId.current++,
     };
 
-    setFields((current) => [...current, newField]);
+    console.log(newField);
+
+    setFields((current) => [...current, newField]); //lägger till det nya fältet längst bak
+    setPendingAction(false);
   }
 
   function handleClear() {}
+
+  function handleCreateCategory(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const newCategory: Omit<Category, "id"> = {
+      name,
+      fields,
+    };
+
+    onCreate(newCategory);
+  }
   return (
     <div className="flex flex-col w-full gap-2">
       <form
+        onSubmit={handleCreateCategory}
         onReset={handleClear}
         className="flex w-full flex-wrap justify-center gap-y-4"
       >
         <h2 className="text-2xl mt-4 font-bold">Hantera kategorier</h2>
-        <div className="flex w-full justify-center items-center gap-x-2">
-          <label htmlFor="name">Kategorinamn: </label>
+        <div className="flex w-full flex-col justify-center items-center gap-x-2">
+          <label htmlFor="name" className="font-semibold">
+            Ny kategori{" "}
+          </label>
           <input
             type="text"
             id="name"
@@ -40,27 +66,44 @@ export default function CategoryForm() {
           />
         </div>
 
+        <div>
+          {fields.map((field) => (
+            <FieldItem field={field} />
+          ))}
+        </div>
+
         <div className="flex w-full justify-center">
           <button
             type="button"
-            className="px-2 border-2 font-semibold text-white rounded-xl bg-[#001C89]"
+            onClick={() => setPendingAction(true)}
+            className="px-2 border-2 font-semibold text-white rounded-xl bg-[#001C89]  hover:bg-[#001C89]/90"
           >
-            Nytt fält +
+            Lägg till fält +
           </button>
         </div>
 
         <div className=" flex gap-x-2">
           <button
             type="submit"
-            className="px-3 py-2 bg-[#001C89] text-white rounded-lg"
+            className="px-3 py-2 bg-[#001C89] text-white rounded-lg  hover:bg-[#001C89]/90"
           >
             Skapa kategori
           </button>
-          <button type="reset" className="px-3 py-2 rounded-lg border">
+          <button
+            type="reset"
+            className="px-3 py-2 rounded-lg border hover:bg-gray-100"
+          >
             Rensa
           </button>
         </div>
       </form>
+
+      {pendingAction && (
+        <CategoryFieldDialog
+          onAdd={handleAddField}
+          onCancel={() => setPendingAction(false)}
+        />
+      )}
 
       {feedback && (
         <div className="p-4">

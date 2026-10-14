@@ -1,7 +1,9 @@
+import type { Category } from "../types/Category";
+
 type CategoryScrollerProps = {
-  categories: string[];
-  selectedCategory: string | null;
-  onCategoryChange: (category: string) => void;
+  categories: Category[];
+  selectedCategory: Category | null;
+  onCategoryChange: (category: Category) => void;
 };
 
 export default function CategoryScroller({
@@ -17,7 +19,7 @@ export default function CategoryScroller({
     >
       {categories.map((category) => (
         <button
-          key={category}
+          key={category.id}
           type="button"
           aria-pressed={selectedCategory === category}
           onClick={() => onCategoryChange(category)}
@@ -27,7 +29,7 @@ export default function CategoryScroller({
               : "border-gray-300 bg-white hover:bg-gray-100"
           }`}
         >
-          {category}
+          {category.name}
         </button>
       ))}
     </div>
