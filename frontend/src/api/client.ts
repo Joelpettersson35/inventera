@@ -1,3 +1,5 @@
+import { ApiError } from "./apiError";
+
 export async function apiRequest<T>(
   path: string,
   options: RequestInit = {},
@@ -14,7 +16,22 @@ export async function apiRequest<T>(
   );
 
   if (!response.ok) {
-    throw new Error(`Anropet misslyckades (${response.status}).`);
+
+    const body: unknown = await response.json().catch(() => null);
+
+    let message = `Anropet misslyckades (${response.status}).`;
+
+    //kontrollerar att svaret är ett objekt, inte är null, om det innehåller ett "message"-fält och att fältet är en sträng
+      if (
+        typeof body === "object" &&
+        body !== null &&
+        "message" in body &&
+        typeof body.message === "string" &&
+        body.message.trim()
+      ) {
+        message = body.message;
+      }
+        throw new ApiError(response.status, message);
   }
 
   return response.json();

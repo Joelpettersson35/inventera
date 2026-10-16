@@ -22,6 +22,13 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
   const newFieldId = useRef(0);
 
   function handleAddField(field: CategoryField) {
+    console.log("lägg till fält förfan");
+    console.log(field.label);
+    if (!field.label.trim()) {
+      console.log("ange LABEL!!!");
+      setFeedback({ type: "error", message: "Ge fältet en etikett" });
+      return;
+    }
     //lägger till ett id för på det nya fältet
     const newField: CategoryFieldDraft = {
       ...field,
@@ -101,7 +108,12 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
       {pendingAction && (
         <CategoryFieldDialog
           onAdd={handleAddField}
-          onCancel={() => setPendingAction(false)}
+          onCancel={() => {
+            setPendingAction(false);
+            setFeedback(null);
+          }}
+          feedback={feedback}
+          setFeedback={setFeedback}
         />
       )}
 

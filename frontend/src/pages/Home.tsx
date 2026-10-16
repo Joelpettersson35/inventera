@@ -1,4 +1,3 @@
-import { articles } from "../data/articles";
 import ListItem from "../components/ListItem";
 import qrcode from "../assets/qr-code.png";
 import SearchForm from "../components/SearchForm";
@@ -21,11 +20,7 @@ export default function Home() {
       />
 
       <h2 className="text-xl font-bold mt-3 mb-4">Artiklar</h2>
-      <ul className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-300 bg-gray-100">
-        {articles.map((article) => (
-          <ListItem key={article.id} article={article} />
-        ))}
-      </ul>
+      <ul className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-300 bg-gray-100"></ul>
     </section>
   );
 }
