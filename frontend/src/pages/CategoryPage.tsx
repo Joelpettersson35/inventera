@@ -18,9 +18,8 @@ export default function CategoryPage() {
   }
 
   return (
-    <div>
+    <div className="flex p-4">
       <CategoryForm onCreate={handleCreateCategory} />
-      <CategoryList></CategoryList>
     </div>
   );
 }

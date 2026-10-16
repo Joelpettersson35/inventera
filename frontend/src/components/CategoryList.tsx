@@ -4,6 +4,6 @@ type CategoryListProps = {
   categories: Category[];
 };
 
-export default function CategoryList() {
+export default function CategoryList({ categories }: CategoryListProps) {
   return <div></div>;
 }

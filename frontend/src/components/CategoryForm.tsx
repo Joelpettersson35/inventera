@@ -15,7 +15,7 @@ type CategoryFormProps = {
 
 export default function CategoryForm({ onCreate }: CategoryFormProps) {
   const [name, setName] = useState("");
-  const [fields, setFields] = useState<CategoryField[]>([]);
+  const [fields, setFields] = useState<CategoryFieldDraft[]>([]);
 
   const [pendingAction, setPendingAction] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -39,9 +39,14 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
 
     setFields((current) => [...current, newField]); //lägger till det nya fältet längst bak
     setPendingAction(false);
+    setFeedback(null);
   }
 
   function handleClear() {}
+
+  function handleEdit(id: number) {
+    console.log("klickade på field: " + id);
+  }
 
   function handleCreateCategory(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,9 +78,13 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
           />
         </div>
 
-        <div>
+        <div className="flex flex-wrap w-full gap-y-3">
           {fields.map((field) => (
-            <FieldItem field={field} />
+            <FieldItem
+              key={field.id}
+              field={field}
+              onEdit={() => handleEdit(field.id)}
+            />
           ))}
         </div>
 
