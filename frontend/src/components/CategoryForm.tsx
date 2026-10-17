@@ -16,14 +16,14 @@ type CategoryFormProps = {
 export default function CategoryForm({ onCreate }: CategoryFormProps) {
   const [name, setName] = useState("");
   const [fields, setFields] = useState<CategoryFieldDraft[]>([]);
-
+  const [selectedField, setSelectedField] = useState<CategoryFieldDraft | null>(
+    null,
+  );
   const [pendingAction, setPendingAction] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const newFieldId = useRef(0);
 
   function handleAddField(field: CategoryField) {
-    console.log("lägg till fält förfan");
-    console.log(field.label);
     if (!field.label.trim()) {
       console.log("ange LABEL!!!");
       setFeedback({ type: "error", message: "Ge fältet en etikett" });
@@ -39,13 +39,19 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
 
     setFields((current) => [...current, newField]); //lägger till det nya fältet längst bak
     setPendingAction(false);
+    setSelectedField(null);
     setFeedback(null);
   }
 
   function handleClear() {}
 
-  function handleEdit(id: number) {
+  function handleEditField(id: number, field: CategoryField) {
     console.log("klickade på field: " + id);
+    const editField = fields.find((field) => field.id === id);
+    if (editField !== undefined) {
+      setSelectedField(editField);
+      setPendingAction(true);
+    }
   }
 
   function handleCreateCategory(event: SubmitEvent<HTMLFormElement>) {
@@ -83,7 +89,7 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
             <FieldItem
               key={field.id}
               field={field}
-              onEdit={() => handleEdit(field.id)}
+              onEdit={() => handleEditField(field.id, field)}
             />
           ))}
         </div>
@@ -120,7 +126,10 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
           onCancel={() => {
             setPendingAction(false);
             setFeedback(null);
+            setSelectedField(null);
           }}
+          onEdit={handleEditField}
+          selectedField={selectedField}
           feedback={feedback}
           setFeedback={setFeedback}
         />

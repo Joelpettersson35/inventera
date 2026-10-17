@@ -1,4 +1,4 @@
-import type { CategoryField } from "../types/Category";
+import type { CategoryField, CategoryFieldDraft } from "../types/Category";
 import { useState } from "react";
 import Message from "./Message";
 import type { Feedback } from "../types/Feedback";
@@ -6,19 +6,44 @@ import type { Feedback } from "../types/Feedback";
 type CategoryFieldDialogProps = {
   onAdd: (field: CategoryField) => void;
   onCancel: () => void;
+  onEdit: (id: number, field: CategoryField) => void;
   feedback: Feedback | null;
+  selectedField: CategoryFieldDraft | null;
   setFeedback: (feedback: Feedback) => void;
 };
 
 export default function CategoryFieldDialog({
   onAdd,
   onCancel,
+  onEdit,
   feedback,
+  selectedField,
 }: CategoryFieldDialogProps) {
-  const [label, setLabel] = useState("");
-  const [type, setType] = useState<CategoryField["type"]>("TEXT");
-  const [required, setRequired] = useState(false);
+  const [label, setLabel] = useState(selectedField?.label ?? "");
+  const [type, setType] = useState<CategoryField["type"]>(
+    selectedField?.type ?? "TEXT",
+  );
+  const [required, setRequired] = useState(selectedField?.required ?? false);
   //lägg till här feedback också
+
+  function handleSave() {
+    const field: CategoryField = {
+      label: label.trim(),
+      type,
+      required,
+    };
+    if (selectedField !== null) {
+      console.log("redigera fält");
+      onEdit(selectedField.id, field);
+    } else {
+      console.log("nytt fält");
+      onAdd({
+        label: label.trim(),
+        type,
+        required,
+      });
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -26,7 +51,9 @@ export default function CategoryFieldDialog({
         {feedback && (
           <Message type={feedback.type} message={feedback.message} />
         )}
-        <h3 className="font-bold text-xl my-3">Nytt fält</h3>
+        <h3 className="font-bold text-xl my-3">
+          {selectedField !== null ? "Redigera fält" : "Nytt fält"}
+        </h3>
 
         <label field-label="name">Etikett:</label>
         <input
@@ -41,6 +68,7 @@ export default function CategoryFieldDialog({
         <label field-label="type">Typ:</label>
         <select
           id="type"
+          value={type}
           onChange={(event) => {
             setType(event.target.value as CategoryField["type"]);
           }}
@@ -71,10 +99,10 @@ export default function CategoryFieldDialog({
 
           <button
             type="button"
-            onClick={() => onAdd({ label: label.trim(), type, required })}
+            onClick={handleSave}
             className="rounded-lg bg-[#001C89] px-4 py-2 font-medium text-white hover:bg-[#001C89]/90"
           >
-            Skapa
+            {selectedField !== null ? "Spara ändringar" : "Skapa"}
           </button>
         </div>
       </div>

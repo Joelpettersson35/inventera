@@ -1,9 +1,9 @@
-import type { CategoryField } from "../types/Category";
+import type { CategoryField, CategoryFieldDraft } from "../types/Category";
 import { SquarePen, Trash } from "lucide-react";
 
 type FieldItemProps = {
-  field: CategoryField;
-  onEdit: () => void;
+  field: CategoryFieldDraft;
+  onEdit: (id: number) => void;
 };
 
 export default function FieldItem({ field, onEdit }: FieldItemProps) {
@@ -34,7 +34,7 @@ export default function FieldItem({ field, onEdit }: FieldItemProps) {
       <div className="flex ml-auto gap-x-3">
         <button
           type="button"
-          onClick={onEdit}
+          onClick={() => onEdit(field.id)}
           className="rounded-md p-1 hover:bg-gray-300 active:bg-gray-300"
         >
           <SquarePen />
