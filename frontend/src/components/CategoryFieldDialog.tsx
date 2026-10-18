@@ -6,7 +6,7 @@ import type { Feedback } from "../types/Feedback";
 type CategoryFieldDialogProps = {
   onAdd: (field: CategoryField) => void;
   onCancel: () => void;
-  onEdit: (id: number, field: CategoryField) => void;
+  onEdit: (field: CategoryField) => void;
   feedback: Feedback | null;
   selectedField: CategoryFieldDraft | null;
   setFeedback: (feedback: Feedback) => void;
@@ -34,7 +34,7 @@ export default function CategoryFieldDialog({
     };
     if (selectedField !== null) {
       console.log("redigera fält");
-      onEdit(selectedField.id, field);
+      onEdit(field);
     } else {
       console.log("nytt fält");
       onAdd({

@@ -45,13 +45,24 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
 
   function handleClear() {}
 
-  function handleEditField(id: number, field: CategoryField) {
+  function handleOpenEdit(id: number) {
     console.log("klickade på field: " + id);
     const editField = fields.find((field) => field.id === id);
     if (editField !== undefined) {
       setSelectedField(editField);
       setPendingAction(true);
     }
+  }
+
+  function handleChanges(changes: CategoryField) {
+    console.log("förösker spara" + selectedField?.id);
+    setFields((current) =>
+      current.map((field) =>
+        field.id === selectedField?.id ? { ...field, ...changes } : field,
+      ),
+    );
+    setPendingAction(false);
+    setSelectedField(null);
   }
 
   function handleCreateCategory(event: SubmitEvent<HTMLFormElement>) {
@@ -89,7 +100,7 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
             <FieldItem
               key={field.id}
               field={field}
-              onEdit={() => handleEditField(field.id, field)}
+              onEdit={() => handleOpenEdit(field.id)}
             />
           ))}
         </div>
@@ -128,7 +139,7 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
             setFeedback(null);
             setSelectedField(null);
           }}
-          onEdit={handleEditField}
+          onEdit={handleChanges}
           selectedField={selectedField}
           feedback={feedback}
           setFeedback={setFeedback}
