@@ -11,9 +11,10 @@ import FieldItem from "./FieldItem";
 
 type CategoryFormProps = {
   onCreate: (category: Omit<Category, "id">) => void;
+  onCancel: () => void;
 };
 
-export default function CategoryForm({ onCreate }: CategoryFormProps) {
+export default function CategoryForm({ onCreate, onCancel }: CategoryFormProps) {
   const [name, setName] = useState("");
   const [fields, setFields] = useState<CategoryFieldDraft[]>([]);
   const [selectedField, setSelectedField] = useState<CategoryFieldDraft | null>(
@@ -79,9 +80,8 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
       <form
         onSubmit={handleCreateCategory}
         onReset={handleClear}
-        className="flex w-full flex-wrap justify-center gap-y-4"
+        className="flex w-full flex-wrap justify-center"
       >
-        <h2 className="text-2xl mt-4 font-bold">Hantera kategorier</h2>
         <div className="flex w-full flex-col justify-center items-center gap-x-2">
           <label htmlFor="name" className="font-semibold">
             Ny kategori{" "}
@@ -89,13 +89,14 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
           <input
             type="text"
             id="name"
-            className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+            className="mt-1 rounded-lg border border-gray-300 px-3 py-2 mb-3"
             value={name}
+            placeholder="Kategorinamn"
             onChange={(event) => setName(event.target.value)}
           />
         </div>
 
-        <div className="flex flex-wrap w-full gap-y-3">
+        <div className="flex flex-wrap w-full gap-y-3 mb-3">
           {fields.map((field) => (
             <FieldItem
               key={field.id}
@@ -109,7 +110,7 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
           <button
             type="button"
             onClick={() => setPendingAction(true)}
-            className="px-2 border-2 font-semibold text-white rounded-xl bg-[#001C89]  hover:bg-[#001C89]/90"
+            className="px-2 py-1 border-2 mb-8 font-semibold text-white rounded-xl bg-[#001C89]  hover:bg-[#001C89]/90"
           >
             Lägg till fält +
           </button>
@@ -124,9 +125,10 @@ export default function CategoryForm({ onCreate }: CategoryFormProps) {
           </button>
           <button
             type="reset"
+            onClick={onCancel}
             className="px-3 py-2 rounded-lg border hover:bg-gray-100"
           >
-            Rensa
+            Avbryt
           </button>
         </div>
       </form>

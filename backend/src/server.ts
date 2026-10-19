@@ -35,6 +35,7 @@ await app.register(cors, {
   "http://localhost:5173",
   "http://192.168.1.153:5173",
   "http://192.168.1.83:5173",
+  "http://10.59.246.90:5173"
 ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });
@@ -57,6 +58,7 @@ async function start() {
       port: 3000,
       host: "0.0.0.0",
     });
+    console.log(process.env.DATABASE_URL);
   } catch (error) {
     app.log.error(error);
     process.exit(1);
