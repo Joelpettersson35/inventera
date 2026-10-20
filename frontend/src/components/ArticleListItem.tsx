@@ -16,7 +16,7 @@ export default function ListItem({ article }: ListItemProps) {
           <h3 className="font-medium">{article.name}</h3>
 
           <p className="mt-1 text-sm text-gray-500">
-            {article.id} · {article.category}
+            {article.id} · {article.categoryId}
           </p>
         </div>
 

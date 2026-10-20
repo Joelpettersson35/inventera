@@ -1,4 +1,4 @@
-import ListItem from "../components/ListItem";
+import ArticleListItem from "../components/ArticleListItem";
 import qrcode from "../assets/qr-code.png";
 import SearchForm from "../components/SearchForm";
 import { useState } from "react";

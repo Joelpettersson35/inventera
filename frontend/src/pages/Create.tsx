@@ -4,13 +4,14 @@ import CategoryScroller from "../components/CategoryScroller";
 import { createArticle } from "../api/articles";
 import Message from "../components/Message";
 import { type Feedback } from "../types/Feedback";
-import type { Category } from "../types/Category";
+import { type CategoryField, type Category } from "../types/Category";
 import useCategories from "../hooks/useCategories";
 
 export default function Create() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
+  const [attributes, setAttributes] = useState<Record<string, unknown>>({});
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [description, setDescription] = useState("");
@@ -64,7 +65,8 @@ export default function Create() {
         name: name.trim(),
         quantity: amount,
         description: description.trim(),
-        category: selectedCategory,
+        categoryId: selectedCategory.id,
+        attributes: attributes
       });
 
       clearFields();
@@ -103,8 +105,9 @@ export default function Create() {
             onCategoryChange={setSelectedCategory}
           />
         </div>
-        <div className="flex w-full justify-center items-center gap-x-2">
-          <label htmlFor="name">Namn: </label>
+        {selectedCategory && (<>
+          <div className="flex w-full justify-center items-center gap-x-2">
+          <label htmlFor="name">*Namn: </label>
           <input
             type="text"
             id="name"
@@ -114,7 +117,7 @@ export default function Create() {
           />
         </div>
         <div className="flex w-full justify-center items-center gap-x-2">
-          <label htmlFor="quantity">Antal: </label>
+          <label htmlFor="quantity">*Saldo: </label>
           <input
             id="quantity"
             type="number"
@@ -127,6 +130,29 @@ export default function Create() {
           />
         </div>
 
+        {selectedCategory.fields.map((field) => (
+          <div className="flex w-full justify-center items-center gap-x-2">
+            <label htmlFor={field.id}>{field.required ? "*": ""}{field.label}</label>
+            
+              {field.type === "BOOLEAN" ? (
+              <select
+                id={field.id}
+                className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+              >
+                <option value="">Välj...</option>
+                <option value="true">Ja</option>
+                <option value="false">Nej</option>
+              </select>
+            ) : (
+              <input
+                id={field.id}
+                type={field.type === "NUMBER" ? "number" : "text"}
+                className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+              />
+              )}
+          </div>
+        ))}
+
         <div className=" flex gap-x-2">
           <button
             type="submit"
@@ -138,6 +164,9 @@ export default function Create() {
             Rensa
           </button>
         </div>
+        </>
+        )}
+        
       </form>
 
       {feedback && (
