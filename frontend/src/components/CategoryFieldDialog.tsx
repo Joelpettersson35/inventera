@@ -28,6 +28,7 @@ export default function CategoryFieldDialog({
 
   function handleSave() {
     const field: CategoryField = {
+      id: 0, //kommer skrivas över i förälderkomponenten till riktigt id
       label: label.trim(),
       type,
       required,
@@ -38,6 +39,7 @@ export default function CategoryFieldDialog({
     } else {
       console.log("nytt fält");
       onAdd({
+        id: 0, //kommer skrivas över i förälderkomponenten till riktigt id
         label: label.trim(),
         type,
         required,

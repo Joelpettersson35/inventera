@@ -6,6 +6,7 @@ type CreateArticleBody = {
   quantity: number;
   description?: string;
   categoryId: string;
+  attributes: Record<string, unknown>;
 };
 
 const articleRoutes: FastifyPluginAsync = async (app) => {
@@ -43,12 +44,12 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
 
   // POST /api/articles
   app.post<{ Body: CreateArticleBody }>(
-    "/",
+    "/articles",
     {
       schema: {
         body: {
           type: "object",
-          required: ["name", "quantity", "categoryId"],
+          required: ["name", "quantity", "categoryId", "attributes"],
           additionalProperties: false,
           properties: {
             name: {
@@ -68,12 +69,16 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
               type: "string",
               minLength: 1,
             },
+            attributes: {
+              type: "object",
+              additionalProperties: {}
+            }
           },
         },
       },
     },
     async (request, reply) => {
-      const { name, quantity, description, categoryId } = request.body;
+      const { name, quantity, description, categoryId, attributes } = request.body;
 
       if (!name.trim()) {
         return reply.code(400).send({
@@ -86,6 +91,9 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
         where: {
           id: categoryId,
         },
+        include: {
+          fields: true
+        }
       });
 
       if (!category) {
@@ -94,12 +102,69 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
         });
       }
 
+      if(quantity < 0 || quantity > 500){
+        return reply.code(400).send({message: "Saldo måste vara mellan 0-500"});
+      }
+
+      if(description && description.length > 500){
+        return reply.code(400).send({message: "Angiven beskriven är över 500 tecken"});
+      }
+
+      const allowedFieldIds = new Set(category.fields.map((field) => field.id),); //tillåtna fält på aktuell kategori
+
+      //Kontrollerar om alla inkommande fält faktiskt finns på aktuell kategori
+      //NOTE ett fält kan förekomma som dublett i anropet, inget problem just nu, det är sista förekomsten som gäller
+      for(const fieldId of Object.keys(attributes)){
+        if(!allowedFieldIds.has(fieldId)){
+          console.log(fieldId);
+          return reply.code(400).send({message: "Ett fält-id ingår inte i denna kategori"});
+        }
+      }
+
+      const validatedFields: Record<string, string | number | boolean> = {};
+      for(const field of category.fields){
+        const value = attributes[field.id];
+
+        const isEmpty =
+            value === undefined || // Fältet saknas.
+            value === null ||      // Fältet har uttryckligen inget värde.
+            (typeof value === "string" && value.trim() === ""); // Fältet innehåller tom text eller bara whitespace.
+
+        if(isEmpty && field.required){
+          return reply.code(400).send({message: field.label + " är ett obligatiskt fält"});
+        }
+
+        switch(field.type){
+          case "TEXT":
+            if(typeof value !== "string"){
+              return reply.code(400).send({message: field.label + " måste vara text"});
+            }
+            validatedFields[field.id] = value.trim();
+            break;
+          
+          case "NUMBER":
+            if (typeof value !== "number" || !Number.isFinite(value)) {
+              return reply.code(400).send({message: `"${field.label}" måste vara ett giltigt tal.`,});
+            }
+            validatedFields[field.id] = value;
+            break;
+          
+          case "BOOLEAN":
+            if(typeof value !== "boolean"){
+              return reply.code(400).send({message: `"${field.label}" saknar giltigt värde.`,});
+            }
+            validatedFields[field.id] = value;
+            break;
+        }
+      }
+
       const article = await prisma.article.create({
         data: {
           name: name.trim(),
           quantity,
           description: description?.trim() ?? "",
           categoryId,
+          attributes: validatedFields
         },
         include: {
           category: true,

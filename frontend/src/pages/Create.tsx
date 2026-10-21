@@ -4,17 +4,17 @@ import CategoryScroller from "../components/CategoryScroller";
 import { createArticle } from "../api/articles";
 import Message from "../components/Message";
 import { type Feedback } from "../types/Feedback";
-import { type CategoryField, type Category } from "../types/Category";
+import { type Category } from "../types/Category";
 import useCategories from "../hooks/useCategories";
 
 export default function Create() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
-  const [attributes, setAttributes] = useState<Record<string, unknown>>({});
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [description, setDescription] = useState("");
+  const [attributes, setAttributes] = useState<Record<string, unknown>>({});
 
   const { categories, isLoading, error } = useCategories();
 
@@ -31,6 +31,22 @@ export default function Create() {
   function handleClear() {
     clearFields();
     setFeedback(null);
+  }
+
+  function handleCategoryChange(category: Category) {
+    setName("");
+    setQuantity("1");
+    setDescription("");
+    setFeedback(null);
+    setAttributes({});
+    setSelectedCategory(category);
+  }
+
+  function updateAttribute(fieldId: string, value: unknown) {
+    setAttributes((current) => ({
+      ...current,
+      [fieldId]: value,
+    }));
   }
 
   async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
@@ -60,18 +76,22 @@ export default function Create() {
 
     setIsSubmitting(true);
 
+    console.log(attributes);
+
     try {
       const article = await createArticle({
         name: name.trim(),
         quantity: amount,
         description: description.trim(),
         categoryId: selectedCategory.id,
-        attributes: attributes
+        attributes: attributes,
       });
+
+      console.log(article);
 
       clearFields();
       setFeedback({
-        type: "error",
+        type: "success",
         message: `Artikeln "${article.name}" har skapats.`,
       });
     } catch (error) {
@@ -102,71 +122,103 @@ export default function Create() {
           <CategoryScroller
             categories={categories}
             selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            onCategoryChange={handleCategoryChange}
           />
         </div>
-        {selectedCategory && (<>
-          <div className="flex w-full justify-center items-center gap-x-2">
-          <label htmlFor="name">*Namn: </label>
-          <input
-            type="text"
-            id="name"
-            className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-        </div>
-        <div className="flex w-full justify-center items-center gap-x-2">
-          <label htmlFor="quantity">*Saldo: </label>
-          <input
-            id="quantity"
-            type="number"
-            min="1"
-            step="1"
-            value={quantity}
-            onChange={(event) => setQuantity(event.target.value)}
-            className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
-            autoFocus
-          />
-        </div>
-
-        {selectedCategory.fields.map((field) => (
-          <div className="flex w-full justify-center items-center gap-x-2">
-            <label htmlFor={field.id}>{field.required ? "*": ""}{field.label}</label>
-            
-              {field.type === "BOOLEAN" ? (
-              <select
-                id={field.id}
-                className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
-              >
-                <option value="">Välj...</option>
-                <option value="true">Ja</option>
-                <option value="false">Nej</option>
-              </select>
-            ) : (
+        {selectedCategory && (
+          <>
+            <div className="flex w-full justify-center items-center gap-x-2">
+              <label htmlFor="name">
+                Namn {<span className="text-[#EF5050]"> *</span>}
+              </label>
               <input
-                id={field.id}
-                type={field.type === "NUMBER" ? "number" : "text"}
+                type="text"
+                id="name"
+                className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+              />
+            </div>
+            <div className="flex w-full justify-center items-center gap-x-2">
+              <label htmlFor="quantity">
+                Saldo {<span className="text-[#EF5050]"> *</span>}
+              </label>
+              <input
+                id="quantity"
+                type="number"
+                min="1"
+                step="1"
+                value={quantity}
+                onChange={(event) => setQuantity(event.target.value)}
                 className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
               />
-              )}
-          </div>
-        ))}
+            </div>
 
-        <div className=" flex gap-x-2">
-          <button
-            type="submit"
-            className="px-3 py-2 bg-[#001C89] text-white rounded-lg"
-          >
-            Lägg till
-          </button>
-          <button type="reset" className="px-3 py-2 rounded-lg border">
-            Rensa
-          </button>
-        </div>
-        </>
+            {selectedCategory.fields.map((field) => (
+              <div
+                key={field.id}
+                className="flex w-full justify-center items-center gap-x-2"
+              >
+                <label htmlFor={field.label}>
+                  {field.label}{" "}
+                  {field.required ? (
+                    <span className="text-[#EF5050]"> *</span>
+                  ) : (
+                    ""
+                  )}
+                </label>
+
+                {field.type === "BOOLEAN" ? (
+                  <select
+                    id={field.label}
+                    className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+                    onChange={(event) =>
+                      updateAttribute(
+                        field.id.toString(),
+                        Boolean(event.target.value),
+                      )
+                    }
+                  >
+                    <option value="">Välj...</option>
+                    <option value="true">Ja</option>
+                    <option value="false">Nej</option>
+                  </select>
+                ) : (
+                  <input
+                    id={field.label}
+                    type={field.type === "NUMBER" ? "number" : "text"}
+                    onChange={(event) =>
+                      updateAttribute(field.id.toString(), event.target.value)
+                    }
+                    className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+                  />
+                )}
+              </div>
+            ))}
+
+            <div className="flex w-full justify-center items-center gap-x-2">
+              <label htmlFor="name">Beskrivning</label>
+              <textarea
+                id="name"
+                className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+              />
+            </div>
+
+            <div className=" flex gap-x-2">
+              <button
+                type="submit"
+                className="px-3 py-2 bg-[#001C89] text-white rounded-lg"
+              >
+                Lägg till
+              </button>
+              <button type="reset" className="px-3 py-2 rounded-lg border">
+                Rensa
+              </button>
+            </div>
+          </>
         )}
-        
       </form>
 
       {feedback && (

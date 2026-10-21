@@ -1,5 +1,5 @@
 export type CategoryField = {
-  id: string;
+  id: number;
   label: string;
   type: "TEXT" | "NUMBER" | "BOOLEAN";
   required: boolean;
