@@ -7,21 +7,24 @@ import Create from "./pages/Create";
 import CategoryPage from "./pages/CategoryPage";
 import NoQrLayout from "./layouts/NoQrLayout";
 import CategoriesProvider from "./context/CategoriesProvider";
+import ArticlesProvider from "./context/ArticlesProvider";
 
 function App() {
   return (
     <CategoriesProvider>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="articles/:id" element={<ArticlePage />} />
-        </Route>
-        <Route element={<NoQrLayout />}>
-          <Route path="create" element={<Create />} />
-          <Route path="categories" element={<CategoryPage />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
+      <ArticlesProvider>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="articles/:id" element={<ArticlePage />} />
+          </Route>
+          <Route element={<NoQrLayout />}>
+            <Route path="create" element={<Create />} />
+            <Route path="categories" element={<CategoryPage />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </ArticlesProvider>
     </CategoriesProvider>
   );
 }

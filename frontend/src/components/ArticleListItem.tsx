@@ -1,11 +1,11 @@
 import { type Article } from "../types/Article";
 import { Link } from "react-router";
 
-type ListItemProps = {
+type ArticleListItemProps = {
   article: Article;
 };
 
-export default function ListItem({ article }: ListItemProps) {
+export default function ListItem({ article }: ArticleListItemProps) {
   return (
     <li>
       <Link
@@ -16,7 +16,7 @@ export default function ListItem({ article }: ListItemProps) {
           <h3 className="font-medium">{article.name}</h3>
 
           <p className="mt-1 text-sm text-gray-500">
-            {article.id} · {article.categoryId}
+            {article.id} · {article.category.name}
           </p>
         </div>
 

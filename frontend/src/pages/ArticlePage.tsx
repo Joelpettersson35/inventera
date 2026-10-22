@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router";
-import { articles } from "../data/articles";
 import QuantityDialog from "../components/QuantityDialog";
+import type { Article } from "../types/Article";
+import useArticles from "../hooks/useArticles";
+
+type ArticlePageProps = {
+  article: Article;
+};
 
 export default function ArticlePage() {
   const { id } = useParams();
+  const { articles } = useArticles();
+
   const article = articles.find((item) => String(item.id) === id);
 
   // State
@@ -87,7 +94,7 @@ export default function ArticlePage() {
       <h2 className="mt-6 text-2xl font-semibold">{article.name}</h2>
 
       <p className="mt-2 text-sm text-gray-500">
-        Artikelnummer: {article.id} · Kategori: {article.category}
+        Artikelnummer: {article.id} · Kategori: {article.category.name}
       </p>
 
       <div className="mt-6 flex items-center justify-between rounded-lg border border-gray-300 bg-gray-100 p-5">

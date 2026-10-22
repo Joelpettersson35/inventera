@@ -6,7 +6,7 @@ import CategoryList from "../components/CategoryList";
 import Message from "../components/Message";
 import { type Feedback } from "../types/Feedback";
 import useCategories from "../hooks/useCategories";
-import CategoryListItem from "../components/CategoryListItem";
+import Spinner from "../components/Spinner";
 
 export default function CategoryPage() {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -47,15 +47,18 @@ export default function CategoryPage() {
         <button
           type="button"
           onClick={() => setShowForm(true)}
-          className="px-3 py-2 text-white rounded-xl bg-[#001C89]  hover:bg-[#001C89]/90"
+          className="px-3 py-2 mb-4 text-white rounded-xl bg-[#001C89]  hover:bg-[#001C89]/90"
         >
           Skapa ny kategori
         </button>
       )}
+      {isLoading && <Spinner message="Hämtar kategorier..." />}
+
       <h3 className="text-2xl w-full text-center mt-8">
         Befintliga kategorier
       </h3>
-      <CategoryList categories={categories} />
+      {categories && <CategoryList categories={categories} />}
+      {error && <Message type="error" message={error} />}
     </div>
   );
 }

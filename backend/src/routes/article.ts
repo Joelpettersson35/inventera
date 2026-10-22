@@ -11,7 +11,7 @@ type CreateArticleBody = {
 
 const articleRoutes: FastifyPluginAsync = async (app) => {
   // GET /api/articles
-  app.get("/", async () => {
+  app.get("/articles", async () => {
     return prisma.article.findMany({
       include: {
         category: true,
@@ -42,9 +42,9 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
     return article;
   });
 
-  // POST /api/articles
+  // POST /api/article
   app.post<{ Body: CreateArticleBody }>(
-    "/articles",
+    "/article",
     {
       schema: {
         body: {
@@ -131,7 +131,7 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
             (typeof value === "string" && value.trim() === ""); // Fältet innehåller tom text eller bara whitespace.
 
         if(isEmpty && field.required){
-          return reply.code(400).send({message: field.label + " är ett obligatiskt fält"});
+          return reply.code(400).send({message: ` Fyll i "${field.label}"`,});
         }
 
         switch(field.type){
@@ -144,6 +144,10 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
           
           case "NUMBER":
             if (typeof value !== "number" || !Number.isFinite(value)) {
+              console.log({
+  value,
+  type: typeof value,
+});
               return reply.code(400).send({message: `"${field.label}" måste vara ett giltigt tal.`,});
             }
             validatedFields[field.id] = value;

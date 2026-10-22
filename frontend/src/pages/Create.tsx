@@ -6,6 +6,8 @@ import Message from "../components/Message";
 import { type Feedback } from "../types/Feedback";
 import { type Category } from "../types/Category";
 import useCategories from "../hooks/useCategories";
+import Spinner from "../components/Spinner";
+import { ApiError } from "../api/apiError";
 
 export default function Create() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
@@ -99,7 +101,10 @@ export default function Create() {
 
       setFeedback({
         type: "error",
-        message: "Artikeln kunde inte skapas. Försök igen.",
+        message:
+          error instanceof ApiError
+            ? error.message
+            : "Artikeln kunde inte skapas. Försök igen.",
       });
     } finally {
       setIsSubmitting(false);
@@ -107,7 +112,7 @@ export default function Create() {
   }
 
   return (
-    <div className="flex justify-center flex-col w-full gap-2">
+    <div className="flex justify-center p-4 flex-col w-full gap-2">
       <form
         onSubmit={handleCreate}
         onReset={handleClear}
@@ -118,13 +123,19 @@ export default function Create() {
         </h2>
 
         <h3 className="text-lg">Välj kategori:</h3>
-        <div className="w-full px-3">
-          <CategoryScroller
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
-          />
-        </div>
+        {isLoading && <Spinner message="Hämtar Kategorier..." />}
+        {error ? (
+          <Message type="error" message={error} />
+        ) : (
+          <div className="w-full px-3">
+            <CategoryScroller
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+            />
+          </div>
+        )}
+
         {selectedCategory && (
           <>
             <div className="flex w-full justify-center items-center gap-x-2">
@@ -159,7 +170,7 @@ export default function Create() {
                 key={field.id}
                 className="flex w-full justify-center items-center gap-x-2"
               >
-                <label htmlFor={field.label}>
+                <label htmlFor={field.id.toString()}>
                   {field.label}{" "}
                   {field.required ? (
                     <span className="text-[#EF5050]"> *</span>
@@ -170,7 +181,7 @@ export default function Create() {
 
                 {field.type === "BOOLEAN" ? (
                   <select
-                    id={field.label}
+                    id={field.id.toString()}
                     className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
                     onChange={(event) =>
                       updateAttribute(
@@ -185,11 +196,21 @@ export default function Create() {
                   </select>
                 ) : (
                   <input
-                    id={field.label}
+                    id={field.id.toString()}
                     type={field.type === "NUMBER" ? "number" : "text"}
-                    onChange={(event) =>
-                      updateAttribute(field.id.toString(), event.target.value)
-                    }
+                    onChange={(event) => {
+                      if (field.type === "TEXT") {
+                        updateAttribute(
+                          field.id.toString(),
+                          event.target.value,
+                        );
+                      } else {
+                        updateAttribute(
+                          field.id.toString(),
+                          Number(event.target.value),
+                        );
+                      }
+                    }}
                     className="mt-1 rounded-lg border border-gray-300 px-3 py-2"
                   />
                 )}

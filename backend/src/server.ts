@@ -54,6 +54,13 @@ app.addHook("onClose", async () => {
 
 async function start() {
   try {
+    await prisma.$connect();
+    
+    // Verifiera anslutningen till databasen
+    await prisma.$queryRaw`SELECT 1`;
+
+    app.log.info("Anslutningen till databasen fungerar.");
+
     await app.listen({
       port: 3000,
       host: "0.0.0.0",
@@ -61,6 +68,7 @@ async function start() {
     console.log(process.env.DATABASE_URL);
   } catch (error) {
     app.log.error(error);
+    await prisma.$disconnect();
     process.exit(1);
   }
 }

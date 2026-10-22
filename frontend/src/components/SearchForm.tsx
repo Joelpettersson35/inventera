@@ -1,7 +1,7 @@
 import type { Category } from "../types/Category";
 import CategoryScroller from "./CategoryScroller";
 
-type ArticleFiltersProps = {
+type SearchFormProps = {
   categories: Category[];
   selectedCategory: Category | null;
   onCategoryChange: (category: Category | null) => void;
@@ -11,7 +11,7 @@ export default function SearchForm({
   categories,
   selectedCategory,
   onCategoryChange,
-}: ArticleFiltersProps) {
+}: SearchFormProps) {
   return (
     <div className="flex flex-wrap w-full min-w-0">
       <form className="flex flex-wrap w-full justify-center gap-x-1.5">
