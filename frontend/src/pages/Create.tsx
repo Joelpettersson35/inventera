@@ -8,6 +8,7 @@ import { type Category } from "../types/Category";
 import useCategories from "../hooks/useCategories";
 import Spinner from "../components/Spinner";
 import { ApiError } from "../api/apiError";
+import useArticles from "../hooks/useArticles";
 
 export default function Create() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
@@ -19,6 +20,7 @@ export default function Create() {
   const [attributes, setAttributes] = useState<Record<string, unknown>>({});
 
   const { categories, isLoading, error } = useCategories();
+  const { refreshArticles } = useArticles();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -91,6 +93,7 @@ export default function Create() {
 
       console.log(article);
 
+      refreshArticles();
       clearFields();
       setFeedback({
         type: "success",

@@ -36,6 +36,13 @@ export default function Navigation() {
           Hem
         </Link>
         <Link
+          to="/storage"
+          onClick={() => setIsOpen(false)}
+          className="px-3 py-2 hover:bg-gray-100 w-56 md:hover:bg-white md:hover:underline"
+        >
+          Lager
+        </Link>
+        <Link
           to="/create"
           onClick={() => setIsOpen(false)}
           className="px-3 py-2 hover:bg-gray-100 w-56 md:hover:bg-white md:hover:underline"

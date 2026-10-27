@@ -144,10 +144,6 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
           
           case "NUMBER":
             if (typeof value !== "number" || !Number.isFinite(value)) {
-              console.log({
-  value,
-  type: typeof value,
-});
               return reply.code(400).send({message: `"${field.label}" måste vara ett giltigt tal.`,});
             }
             validatedFields[field.id] = value;

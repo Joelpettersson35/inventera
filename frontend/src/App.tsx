@@ -8,6 +8,7 @@ import CategoryPage from "./pages/CategoryPage";
 import NoQrLayout from "./layouts/NoQrLayout";
 import CategoriesProvider from "./context/CategoriesProvider";
 import ArticlesProvider from "./context/ArticlesProvider";
+import StoragePage from "./pages/StoragePage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="articles/:id" element={<ArticlePage />} />
+            <Route path="storage" element={<StoragePage />} />
           </Route>
           <Route element={<NoQrLayout />}>
             <Route path="create" element={<Create />} />

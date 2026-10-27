@@ -91,6 +91,7 @@ export default function ArticlePage() {
         <span className="text-2xl">←</span> Alla artiklar
       </Link>
 
+      <div></div>
       <h2 className="mt-6 text-2xl font-semibold">{article.name}</h2>
 
       <p className="mt-2 text-sm text-gray-500">

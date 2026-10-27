@@ -17,12 +17,13 @@ model Category {
 }
 
 model Article {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
-  quantity    Int      @default(0)
-  description String   @default("")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  quantity    Int          @default(0)
+  description String       @default("")
+  placements  BoxArticle[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id]) //fields är denna modellens fält som ska kopplas till references vilket är den främmande modellens fält (id)
@@ -48,4 +49,34 @@ model CategoryField {
   category   Category @relation(fields: [categoryId], references: [id])
 
   @@index([categoryId])
+}
+
+model Shelf {
+  id    String @id @default(uuid())
+  name  String @unique
+  boxes Box[]
+}
+
+model Box {
+  id   String @id @default(uuid())
+  name String
+
+  shelfId String
+  shelf   Shelf  @relation(fields: [shelfId], references: [id], onDelete: Restrict)
+
+  articles BoxArticle[]
+
+  @@unique([shelfId, name])
+}
+
+model BoxArticle {
+  boxId     String
+  articleId String
+  quantity  Int    @default(0)
+
+  box     Box     @relation(fields: [boxId], references: [id], onDelete: Restrict)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Restrict)
+
+  @@id([boxId, articleId])
+  @@index([articleId])
 }
