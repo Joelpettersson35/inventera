@@ -3,6 +3,7 @@ import { prisma } from "./lib/prisma.js";
 import cors from "@fastify/cors";
 import articleRoutes from "./routes/article.js";
 import categoryRoutes from "./routes/category.js";
+import { shelfRoutes } from "./routes/shelf.js";
 
 const app = Fastify({
   logger:
@@ -40,11 +41,15 @@ await app.register(cors, {
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });
 
+await app.register(articleRoutes, {
+  prefix: "/api",
+});
+
 await app.register(categoryRoutes, {
   prefix: "/api",
 });
 
-await app.register(articleRoutes, {
+await app.register(shelfRoutes, {
   prefix: "/api",
 });
 
@@ -55,7 +60,7 @@ app.addHook("onClose", async () => {
 async function start() {
   try {
     await prisma.$connect();
-    
+
     // Verifiera anslutningen till databasen
     await prisma.$queryRaw`SELECT 1`;
 
