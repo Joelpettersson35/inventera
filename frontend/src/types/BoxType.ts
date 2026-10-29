@@ -1,5 +1,5 @@
-
 export type BoxType = {
-    id: string,
-    name: string
-}
+  id: string;
+  name: string;
+  shelfId: string;
+};

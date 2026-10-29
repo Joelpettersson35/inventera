@@ -2,45 +2,49 @@ import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../lib/prisma.js";
 
 type CreateShelfBody = {
-    name: string;
-}
+  name: string;
+};
 
 export const shelfRoutes: FastifyPluginAsync = async (app) => {
-    //POST shelf
-    app.post<{Body: CreateShelfBody}>("/shelf", {
-        schema: {
-            body: {
-                type: "object",
-                required: ["name"],
-                additionalProperties: false,
-                properties: {
-                    name: {
-                    type: "string",
-                    minLength: 1,
-                    maxLength: 200,
-                    },
-                }
-            }
-        }
+  //POST shelf
+  app.post<{ Body: CreateShelfBody }>(
+    "/shelf",
+    {
+      schema: {
+        body: {
+          type: "object",
+          required: ["name"],
+          additionalProperties: false,
+          properties: {
+            name: {
+              type: "string",
+              minLength: 1,
+              maxLength: 200,
+            },
+          },
+        },
+      },
     },
     async (request, reply) => {
-        const name = request.body.name.trim();
+      const name = request.body.name.trim();
 
-        if (!name) {
-            return reply.code(400).send({
-            message: "Ge hyllan ett namn.",
+      if (!name) {
+        return reply.code(400).send({
+          message: "Ge hyllan ett namn.",
         });
-        }
+      }
 
-    const shelf = await prisma.shelf.create({
-    data: { name },
-    });
+      const shelf = await prisma.shelf.create({
+        data: { name },
+        include: { boxes: true },
+      });
 
-  return reply.code(201).send(shelf);
-});
+      return reply.code(201).send(shelf);
+    },
+  );
 
-    // GET /api/shelves
+  // GET /api/shelves
   app.get("/shelves", async () => {
-    return prisma.shelf.findMany();
+    return prisma.shelf.findMany({ include: { boxes: true } });
   });
-}
+};

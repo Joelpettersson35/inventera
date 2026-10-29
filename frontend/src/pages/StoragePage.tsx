@@ -6,6 +6,7 @@ import { type Feedback } from "../types/Feedback";
 import { ApiError } from "../api/apiError";
 import Message from "../components/Message";
 import { type ShelfType } from "../types/ShelfType";
+import { createBox } from "../api/boxes";
 
 export default function StoragePage() {
   const [pendingAction, setPendingAction] = useState(false);
@@ -16,10 +17,10 @@ export default function StoragePage() {
     fetchShelves();
   }, []);
 
-  async function handleCreate(name: string) {
+  async function handleCreateShelf(name: string) {
     try {
       const newShelf = await createShelf({ name: name });
-      console.log("NY HYLLJVÄVEL: " + newShelf);
+      console.log("NY HYLLJVÄVEL: " + newShelf.id);
       setShelves((current) => [newShelf, ...current]);
     } catch (error) {
       setFeedback({
@@ -34,18 +35,43 @@ export default function StoragePage() {
     }
   }
 
-  async function fetchShelves(){
-    try{
+  async function fetchShelves() {
+    try {
       const response = await getShelves();
       setShelves(response);
-    }
-    catch(error){
-            setFeedback({
+    } catch (error) {
+      setFeedback({
         type: "error",
         message:
           error instanceof ApiError
             ? error.message
             : "Kunde inte hämta hyllor.",
+      });
+    }
+  }
+
+  async function handleCreateBox(shelfId: string, boxName: string) {
+    try {
+      const newBox = await createBox({ name: boxName }, shelfId);
+      setShelves((current) => {
+        return current.map((shelf) => {
+          if (shelf.id === newBox.id) {
+            return {
+              ...shelf,
+              boxes: [newBox, ...shelf.boxes],
+            };
+          }
+
+          return shelf;
+        });
+      });
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message:
+          error instanceof ApiError
+            ? error.message
+            : "Lådan kunde inte skapas. Försök igen",
       });
     }
   }
@@ -58,19 +84,19 @@ export default function StoragePage() {
       >
         Skapa hylla
       </button>
-      {feedback && <Message type={feedback.type} message={feedback.message} />}
       <h1 className="text-center w-full text-2xl font-bold mb-6">Hyllor</h1>
+      {feedback && <Message type={feedback.type} message={feedback.message} />}
 
       {!shelves && <h2>Hittade inga hyllor...</h2>}
       <ul className="flex flex-wrap w-full gap-y-4">
         {shelves.map((shelf) => (
-          <Shelf key={shelf.id} shelf={shelf} />
+          <Shelf key={shelf.id} shelf={shelf} onAdd={handleCreateBox} />
         ))}
       </ul>
       {pendingAction && (
         <ShelfDialog
           onCancel={() => setPendingAction(false)}
-          onCreate={handleCreate}
+          onCreate={handleCreateShelf}
         />
       )}
     </div>

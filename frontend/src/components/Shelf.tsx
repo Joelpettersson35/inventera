@@ -7,19 +7,18 @@ import BoxfDialog from "./BoxDialog";
 
 type ShelfProps = {
   shelf: ShelfType;
-  onAdd: () => void;
+  onAdd: (shelfId: string, boxName: string) => void;
 };
 
 export default function Shelf({ shelf, onAdd }: ShelfProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [boxes, setBoxes] = useState<BoxType[]>([]);
-  const [name, setName] = useState("");
   const [pendingAction, setPendingAction] = useState(false);
   const contentId = useId();
 
-  function handleAdd(boxName: string){
-    
+  async function handleAdd(boxName: string) {
+    onAdd(shelf.id, boxName);
   }
+
   return (
     <li
       aria-expanded={isExpanded}
@@ -49,13 +48,9 @@ export default function Shelf({ shelf, onAdd }: ShelfProps) {
       >
         <div className="min-h-0 overflow-hidden">
           <div className="flex flex-wrap justify-center gap-x-2 gap-y-4 p-4 border-t-2 border-gray-300">
-            <Box />
-            <Box />
-            <Box />
-            <Box />
-            <Box />
-            <Box />
-            <Box />
+            {shelf.boxes.map((box) => (
+              <Box key={box.id} box={box} />
+            ))}
             <button
               type="button"
               onClick={() => setPendingAction(true)}
@@ -66,7 +61,13 @@ export default function Shelf({ shelf, onAdd }: ShelfProps) {
           </div>
         </div>
       </div>
-      {pendingAction && <BoxfDialog onCancel={() => setPendingAction(false)} onCreate={handleAdd} shelfName={shelf.name} />}
+      {pendingAction && (
+        <BoxfDialog
+          onCancel={() => setPendingAction(false)}
+          onCreate={handleAdd}
+          shelfName={shelf.name}
+        />
+      )}
     </li>
   );
 }

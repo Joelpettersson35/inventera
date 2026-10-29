@@ -23,7 +23,7 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
   });
 
   // GET /api/articles/:id
-  app.get<{ Params: { id: string } }>("/:id", async (request, reply) => {
+  app.get<{ Params: { id: string } }>("/:id", async (request, response) => {
     const article = await prisma.article.findUnique({
       where: {
         id: request.params.id,
@@ -34,7 +34,7 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
     });
 
     if (!article) {
-      return reply.code(404).send({
+      return response.code(404).send({
         message: "Artikeln hittades inte.",
       });
     }
@@ -77,11 +77,11 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
         },
       },
     },
-    async (request, reply) => {
+    async (request, response) => {
       const { name, quantity, description, categoryId, attributes } = request.body;
 
       if (!name.trim()) {
-        return reply.code(400).send({
+        return response.code(400).send({
           message: "Artikelnamn saknas.",
         });
       }
@@ -97,17 +97,17 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
       });
 
       if (!category) {
-        return reply.code(400).send({
+        return response.code(400).send({
           message: "Angivet kategori-ID finns inte.",
         });
       }
 
       if(quantity < 0 || quantity > 500){
-        return reply.code(400).send({message: "Saldo måste vara mellan 0-500"});
+        return response.code(400).send({message: "Saldo måste vara mellan 0-500"});
       }
 
       if(description && description.length > 500){
-        return reply.code(400).send({message: "Angiven beskriven är över 500 tecken"});
+        return response.code(400).send({message: "Angiven beskriven är över 500 tecken"});
       }
 
       const allowedFieldIds = new Set(category.fields.map((field) => field.id),); //tillåtna fält på aktuell kategori
@@ -117,7 +117,7 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
       for(const fieldId of Object.keys(attributes)){
         if(!allowedFieldIds.has(fieldId)){
           console.log(fieldId);
-          return reply.code(400).send({message: "Ett fält-id ingår inte i denna kategori"});
+          return response.code(400).send({message: "Ett fält-id ingår inte i denna kategori"});
         }
       }
 
@@ -131,27 +131,27 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
             (typeof value === "string" && value.trim() === ""); // Fältet innehåller tom text eller bara whitespace.
 
         if(isEmpty && field.required){
-          return reply.code(400).send({message: ` Fyll i "${field.label}"`,});
+          return response.code(400).send({message: ` Fyll i "${field.label}"`,});
         }
 
         switch(field.type){
           case "TEXT":
             if(typeof value !== "string"){
-              return reply.code(400).send({message: field.label + " måste vara text"});
+              return response.code(400).send({message: field.label + " måste vara text"});
             }
             validatedFields[field.id] = value.trim();
             break;
           
           case "NUMBER":
             if (typeof value !== "number" || !Number.isFinite(value)) {
-              return reply.code(400).send({message: `"${field.label}" måste vara ett giltigt tal.`,});
+              return response.code(400).send({message: `"${field.label}" måste vara ett giltigt tal.`,});
             }
             validatedFields[field.id] = value;
             break;
           
           case "BOOLEAN":
             if(typeof value !== "boolean"){
-              return reply.code(400).send({message: `"${field.label}" saknar giltigt värde.`,});
+              return response.code(400).send({message: `"${field.label}" saknar giltigt värde.`,});
             }
             validatedFields[field.id] = value;
             break;
@@ -171,7 +171,7 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
         },
       });
 
-      return reply.code(201).send(article);
+      return response.code(201).send(article);
     },
   );
 };

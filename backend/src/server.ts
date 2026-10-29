@@ -4,6 +4,7 @@ import cors from "@fastify/cors";
 import articleRoutes from "./routes/article.js";
 import categoryRoutes from "./routes/category.js";
 import { shelfRoutes } from "./routes/shelf.js";
+import { boxRoutes } from "./routes/box.js";
 
 const app = Fastify({
   logger:
@@ -33,11 +34,11 @@ app.get("/api/health", async () => {
 
 await app.register(cors, {
   origin: [
-  "http://localhost:5173",
-  "http://192.168.1.153:5173",
-  "http://192.168.1.83:5173",
-  "http://10.59.246.90:5173"
-],
+    "http://localhost:5173",
+    "http://192.168.1.153:5173",
+    "http://192.168.1.83:5173",
+    "http://10.59.246.90:5173",
+  ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });
 
@@ -50,6 +51,10 @@ await app.register(categoryRoutes, {
 });
 
 await app.register(shelfRoutes, {
+  prefix: "/api",
+});
+
+await app.register(boxRoutes, {
   prefix: "/api",
 });
 
