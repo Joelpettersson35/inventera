@@ -1,15 +1,25 @@
 import { ChevronDown } from "lucide-react";
-import { useState, useId } from "react";
+import { useState, useId, use } from "react";
 import Box from "./Box";
 import type { ShelfType } from "../types/ShelfType";
+import type { BoxType } from "../types/BoxType";
+import BoxfDialog from "./BoxDialog";
 
 type ShelfProps = {
   shelf: ShelfType;
+  onAdd: () => void;
 };
 
-export default function Shelf({ shelf }: ShelfProps) {
+export default function Shelf({ shelf, onAdd }: ShelfProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [boxes, setBoxes] = useState<BoxType[]>([]);
+  const [name, setName] = useState("");
+  const [pendingAction, setPendingAction] = useState(false);
   const contentId = useId();
+
+  function handleAdd(boxName: string){
+    
+  }
   return (
     <li
       aria-expanded={isExpanded}
@@ -48,6 +58,7 @@ export default function Shelf({ shelf }: ShelfProps) {
             <Box />
             <button
               type="button"
+              onClick={() => setPendingAction(true)}
               className="px-2 py-1 bg-[#001C89] text-white text-md rounded-lg"
             >
               Ny låda +
@@ -55,6 +66,7 @@ export default function Shelf({ shelf }: ShelfProps) {
           </div>
         </div>
       </div>
+      {pendingAction && <BoxfDialog onCancel={() => setPendingAction(false)} onCreate={handleAdd} shelfName={shelf.name} />}
     </li>
   );
 }

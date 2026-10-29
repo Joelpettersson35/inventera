@@ -15,3 +15,12 @@ export function createShelf(
     body: JSON.stringify(shelf),
   });
 }
+
+export function getShelves(): Promise<ShelfType[]> {
+  return apiRequest<ShelfType[]>("/shelves", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}

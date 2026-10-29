@@ -37,6 +37,10 @@ export const shelfRoutes: FastifyPluginAsync = async (app) => {
     });
 
   return reply.code(201).send(shelf);
-}
-)
+});
+
+    // GET /api/shelves
+  app.get("/shelves", async () => {
+    return prisma.shelf.findMany();
+  });
 }
