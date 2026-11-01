@@ -1,3 +1,4 @@
+import type { BoxArticleType } from "../api/boxes";
 import { type Article } from "../types/Article";
 import { Link } from "react-router";
 

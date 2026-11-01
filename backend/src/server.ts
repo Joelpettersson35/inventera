@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import type { FastifyError } from "fastify";
 import { prisma } from "./lib/prisma.js";
 import cors from "@fastify/cors";
 import articleRoutes from "./routes/article.js";
@@ -40,6 +41,29 @@ await app.register(cors, {
     "http://10.59.246.90:5173",
   ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
+});
+
+app.setErrorHandler<FastifyError>((error, request, reply) => {
+  if (error.validation) {
+    return reply.code(400).send({
+      message:
+        "Kontrollera att alla obligatoriska uppgifter är korrekt ifyllda.",
+    });
+  }
+
+  const status = error.statusCode ?? 500;
+
+  if (status >= 400 && status < 500) {
+    return reply.code(status).send({
+      message: "Anropet kunde inte behandlas. Kontrollera uppgifterna.",
+    });
+  }
+
+  request.log.error({ err: error }, "Ett oväntat serverfel inträffade");
+
+  return reply.code(500).send({
+    message: "Ett serverfel inträffade. Försök igen senare.",
+  });
 });
 
 await app.register(articleRoutes, {

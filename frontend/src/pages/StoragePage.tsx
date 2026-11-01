@@ -7,6 +7,7 @@ import { ApiError } from "../api/apiError";
 import Message from "../components/Message";
 import { type ShelfType } from "../types/ShelfType";
 import { createBox } from "../api/boxes";
+import Skeleton from "../components/Skeleton";
 
 export default function StoragePage() {
   const [pendingAction, setPendingAction] = useState(false);
@@ -50,12 +51,15 @@ export default function StoragePage() {
     }
   }
 
-  async function handleCreateBox(shelfId: string, boxName: string) {
+  async function handleCreateBox(
+    shelfId: string,
+    boxName: string,
+  ): Promise<boolean> {
     try {
-      const newBox = await createBox({ name: boxName }, shelfId);
+      const newBox = await createBox({ name: boxName, shelfId: shelfId });
       setShelves((current) => {
         return current.map((shelf) => {
-          if (shelf.id === newBox.id) {
+          if (shelf.id === newBox.shelfId) {
             return {
               ...shelf,
               boxes: [newBox, ...shelf.boxes],
@@ -65,6 +69,11 @@ export default function StoragePage() {
           return shelf;
         });
       });
+      setFeedback({
+        type: "success",
+        message: `Lådan "${newBox.name}" skapades`,
+      });
+      return true;
     } catch (error) {
       setFeedback({
         type: "error",
@@ -73,10 +82,13 @@ export default function StoragePage() {
             ? error.message
             : "Lådan kunde inte skapas. Försök igen",
       });
+
+      return false;
     }
   }
   return (
     <div className="flex flex-wrap w-full justify-center p-4">
+      <h1 className="text-center w-full text-2xl font-bold mb-3">Hyllor</h1>
       <button
         type="button"
         onClick={() => setPendingAction(true)}
@@ -84,9 +96,6 @@ export default function StoragePage() {
       >
         Skapa hylla
       </button>
-      <h1 className="text-center w-full text-2xl font-bold mb-6">Hyllor</h1>
-      {feedback && <Message type={feedback.type} message={feedback.message} />}
-
       {!shelves && <h2>Hittade inga hyllor...</h2>}
       <ul className="flex flex-wrap w-full gap-y-4">
         {shelves.map((shelf) => (

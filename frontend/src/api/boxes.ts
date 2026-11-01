@@ -1,17 +1,34 @@
 import type { BoxType } from "../types/BoxType";
 import { apiRequest } from "./client";
 
-export type CreateBoxInput = Omit<BoxType, "id" | "shelfId">;
+export type CreateBoxInput = {
+  name: string;
+  shelfId: string;
+};
 
-export async function createBox(
-  box: CreateBoxInput,
-  shelfId: string,
-): Promise<BoxType> {
+export type BoxArticleType = {
+  boxId: string;
+  articleId: string;
+  quantity: number;
+};
+
+export type BoxDetails = BoxType & {
+  articles: BoxArticleType[];
+};
+
+export async function createBox(input: CreateBoxInput): Promise<BoxType> {
   return apiRequest("/box", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(box),
+    body: JSON.stringify(input),
+  });
+}
+
+export async function getBox(id: string): Promise<BoxDetails> {
+  return apiRequest(`/box/:${id}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
   });
 }

@@ -9,10 +9,10 @@ type ArticlePageProps = {
 };
 
 export default function ArticlePage() {
-  const { id } = useParams();
+  const { articleId } = useParams();
   const { articles } = useArticles();
 
-  const article = articles.find((item) => String(item.id) === id);
+  const article = articles.find((item) => String(item.id) === articleId);
 
   // State
   const [quantities, setQuantities] = useState<Record<string, number>>({});

@@ -9,6 +9,7 @@ import NoQrLayout from "./layouts/NoQrLayout";
 import CategoriesProvider from "./context/CategoriesProvider";
 import ArticlesProvider from "./context/ArticlesProvider";
 import StoragePage from "./pages/StoragePage";
+import BoxPage from "./pages/BoxPage";
 
 function App() {
   return (
@@ -17,8 +18,9 @@ function App() {
         <Routes>
           <Route element={<MainLayout />}>
             <Route index element={<Home />} />
-            <Route path="articles/:id" element={<ArticlePage />} />
+            <Route path="articles/:articleId" element={<ArticlePage />} />
             <Route path="storage" element={<StoragePage />} />
+            <Route path="box/:boxId" element={<BoxPage />} />
           </Route>
           <Route element={<NoQrLayout />}>
             <Route path="create" element={<Create />} />
