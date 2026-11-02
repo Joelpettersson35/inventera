@@ -39,6 +39,7 @@ await app.register(cors, {
     "http://192.168.1.153:5173",
     "http://192.168.1.83:5173",
     "http://10.59.246.90:5173",
+    "http://10.59.246.98:5173"
   ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });

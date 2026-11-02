@@ -63,7 +63,9 @@ export default function Shelf({ shelf, onAdd }: ShelfProps) {
         <div className="min-h-0 overflow-hidden">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 p-4 border-t-2 border-gray-300">
             {feedback && (
-              <Message type={feedback.type} message={feedback.message} />
+              <div className="col-span-full">
+                <Message type={feedback.type} message={feedback.message} />
+              </div>
             )}
             {shelf.boxes.map((box) => (
               <Box key={box.id} box={box} />
