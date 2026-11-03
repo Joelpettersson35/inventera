@@ -5,7 +5,8 @@ export type Article = {
   name: string;
   quantity: number;
   description: string;
-  category: Pick<Category, "id" | "name">
+  category: Pick<Category, "id" | "name">;
   categoryId: string;
+  boxId: string;
   attributes: Record<string, unknown>;
 };

@@ -6,7 +6,7 @@ type ArticleListItemProps = {
   article: Article;
 };
 
-export default function ListItem({ article }: ArticleListItemProps) {
+export default function ArticleListItem({ article }: ArticleListItemProps) {
   return (
     <li>
       <Link

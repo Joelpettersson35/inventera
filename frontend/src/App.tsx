@@ -3,13 +3,13 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import ArticlePage from "./pages/ArticlePage";
 import Settings from "./pages/Settings";
-import Create from "./pages/Create";
 import CategoryPage from "./pages/CategoryPage";
 import NoQrLayout from "./layouts/NoQrLayout";
 import CategoriesProvider from "./context/CategoriesProvider";
 import ArticlesProvider from "./context/ArticlesProvider";
 import StoragePage from "./pages/StoragePage";
 import BoxPage from "./pages/BoxPage";
+import AddArticlePage from "./pages/AddArticlePage";
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
             <Route path="box/:boxId" element={<BoxPage />} />
           </Route>
           <Route element={<NoQrLayout />}>
-            <Route path="create" element={<Create />} />
+            <Route path="create" element={<AddArticlePage />} />
             <Route path="categories" element={<CategoryPage />} />
             <Route path="settings" element={<Settings />} />
           </Route>

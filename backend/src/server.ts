@@ -39,7 +39,7 @@ await app.register(cors, {
     "http://192.168.1.153:5173",
     "http://192.168.1.83:5173",
     "http://10.59.246.90:5173",
-    "http://10.59.246.98:5173"
+    "http://10.59.246.93:5173",
   ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });
@@ -91,8 +91,7 @@ async function start() {
   try {
     await prisma.$connect();
 
-    // Verifiera anslutningen till databasen
-    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$queryRaw`SELECT 1`; // Verifiera anslutningen till databasen
 
     app.log.info("Anslutningen till databasen fungerar.");
 

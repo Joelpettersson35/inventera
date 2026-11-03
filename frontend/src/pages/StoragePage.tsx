@@ -57,6 +57,7 @@ export default function StoragePage() {
   ): Promise<boolean> {
     try {
       const newBox = await createBox({ name: boxName, shelfId: shelfId });
+      console.log(newBox.id);
       setShelves((current) => {
         return current.map((shelf) => {
           if (shelf.id === newBox.shelfId) {

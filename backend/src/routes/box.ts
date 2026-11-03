@@ -9,6 +9,7 @@ type CreateBoxBody = {
 export const boxRoutes: FastifyPluginAsync = async (app) => {
   //GET BOX
   app.get<{ Params: { id: string } }>("/box/:id", async (request, response) => {
+    console.log(request.params.id);
     const box = await prisma.box.findUnique({
       where: {
         id: request.params.id,

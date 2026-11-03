@@ -1,16 +1,131 @@
-import type { Category } from "../types/Category";
+import { useState, type SubmitEvent } from "react";
+import CategoryScroller from "../components/CategoryScroller";
+import { createArticle } from "../api/articles";
+import Message from "../components/Message";
+import { type Feedback } from "../types/Feedback";
+import { type Category } from "../types/Category";
 import useCategories from "../hooks/useCategories";
-import { type SubmitEvent } from "react";
+import Spinner from "../components/Spinner";
+import { ApiError } from "../api/apiError";
+import useArticles from "../hooks/useArticles";
 
-type CreateArticleProps = {
-  selectedCategory: Category | null;
-  onCreate: (event: SubmitEvent<HTMLFormElement>) => void;
+type CreateArticleFormProps = {
+  boxId: string | null;
 };
 
-export default function CreateArticleForm({
-  selectedCategory,
-}: CreateArticleProps) {
+export default function CreateArticleForm({ boxId }: CreateArticleFormProps) {
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [name, setName] = useState("");
+  const [quantity, setQuantity] = useState("1");
+  const [description, setDescription] = useState("");
+  const [attributes, setAttributes] = useState<Record<string, unknown>>({});
+
   const { categories, isLoading, error } = useCategories();
+  const { refreshArticles } = useArticles();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  function clearFields() {
+    setName("");
+    setQuantity("1");
+    setDescription("");
+    setSelectedCategory(null);
+  }
+
+  function handleClear() {
+    clearFields();
+    setFeedback(null);
+  }
+
+  function handleCategoryChange(category: Category) {
+    setName("");
+    setQuantity("1");
+    setDescription("");
+    setFeedback(null);
+    setAttributes({});
+    setSelectedCategory(category);
+  }
+
+  function updateAttribute(fieldId: string, value: unknown) {
+    setAttributes((current) => ({
+      ...current,
+      [fieldId]: value,
+    }));
+  }
+
+  async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    console.log(boxId);
+    if (isSubmitting) return;
+
+    setFeedback(null);
+
+    const amount = Number(quantity);
+
+    if (!name.trim()) {
+      console.log("fel namn");
+      setFeedback({ type: "error", message: "Ge artikeln ett namn" });
+      return;
+    }
+
+    if (!Number.isInteger(amount) || amount < 1) {
+      setFeedback({ type: "error", message: "Ange ett positivt heltal." });
+      return;
+    }
+
+    if (!selectedCategory) {
+      setFeedback({ type: "error", message: "Välj en kategori." });
+      return;
+    }
+
+    if (!boxId) {
+      setFeedback({
+        type: "error",
+        message: "Artikeln måste vara kopplad till en låda",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    console.log(attributes);
+
+    try {
+      const article = await createArticle({
+        name: name.trim(),
+        quantity: amount,
+        description: description.trim(),
+        categoryId: selectedCategory.id,
+        boxId: boxId,
+        attributes: attributes,
+      });
+
+      console.log(article);
+
+      refreshArticles();
+      clearFields();
+      setFeedback({
+        type: "success",
+        message: `Artikeln "${article.name}" har skapats.`,
+      });
+    } catch (error) {
+      console.error("Fel vid skapande av artikel:", error);
+
+      setFeedback({
+        type: "error",
+        message:
+          error instanceof ApiError
+            ? error.message
+            : "Artikeln kunde inte skapas. Försök igen.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="flex justify-center p-4 flex-col w-full gap-2">
       <form
@@ -19,7 +134,7 @@ export default function CreateArticleForm({
         className="flex w-full flex-wrap justify-center gap-y-3"
       >
         <h2 className="text-2xl text-center w-full mt-4 font-bold">
-          Skapa artikel
+          Skapa artikel för låda: {boxId}
         </h2>
 
         <h3 className="text-lg">Välj kategori:</h3>
@@ -141,6 +256,12 @@ export default function CreateArticleForm({
           </>
         )}
       </form>
+
+      {feedback && (
+        <div className="p-4">
+          <Message type={feedback.type} message={feedback.message} />
+        </div>
+      )}
     </div>
   );
 }
