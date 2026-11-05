@@ -17,7 +17,11 @@ export const boxRoutes: FastifyPluginAsync = async (app) => {
       include: {
         articles: {
           include: {
-            article: true,
+            article: {
+              include: {
+                category: true,
+              },
+            },
           },
         },
       },

@@ -73,8 +73,8 @@ export default function ArticlePage() {
   if (!article) {
     return (
       <section className="mx-auto max-w-2xl px-3 py-6">
-        <Link to="/" className="text-[#001C89] hover:underline">
-          ← Alla artiklar
+        <Link to="/storage" className="text-[#001C89] hover:underline">
+          ← Hyllor
         </Link>
 
         <p className="mt-6">Artikeln hittades inte.</p>
@@ -85,10 +85,10 @@ export default function ArticlePage() {
   return (
     <section className="mx-auto max-w-2xl px-3 py-6">
       <Link
-        to="/"
+        to="/storage"
         className="text-lg font-semibold text-[#001C89] hover:underline"
       >
-        <span className="text-2xl">←</span> Alla artiklar
+        <span className="text-2xl">←</span> Hyllor
       </Link>
 
       <div></div>

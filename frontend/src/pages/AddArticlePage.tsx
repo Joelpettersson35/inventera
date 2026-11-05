@@ -5,7 +5,7 @@ export default function AddArticlePage() {
   const [searchParams] = useSearchParams();
   const boxId = searchParams.get("boxId");
   return (
-    <div>
+    <div className="w-full">
       <CreateArticleForm boxId={boxId} />
     </div>
   );

@@ -50,12 +50,12 @@ export default function BoxPage() {
         (box.articles.length === 0 ? (
           <p className="text-xl text-gray-600">Lådan är tom.</p>
         ) : (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-300 bg-gray-100 mb-4">
+          <ul className="w-full divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-300 bg-gray-100 mb-4">
             {box &&
-              box.articles.map((article) => (
+              box.articles.map((placement) => (
                 <ArticleListItem
-                  key={article.articleId}
-                  article={article.article}
+                  key={placement.articleId}
+                  placement={placement}
                 />
               ))}
           </ul>

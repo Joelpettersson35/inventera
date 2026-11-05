@@ -27,12 +27,6 @@ export default function Home() {
       />
 
       <h2 className="text-xl font-bold mt-3 mb-4">Artiklar</h2>
-      <ul className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-300 bg-gray-100 mb-4">
-        {articles &&
-          articles.map((article) => (
-            <ArticleListItem key={article.id} article={article} />
-          ))}
-      </ul>
       {articlesError && <Message type="error" message={articlesError} />}
     </section>
   );
