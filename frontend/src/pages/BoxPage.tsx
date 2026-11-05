@@ -3,7 +3,8 @@ import { Link } from "react-router";
 import { useParams } from "react-router";
 import { type Article } from "../types/Article";
 import ArticleListItem from "../components/ArticleListItem";
-import { getBox, type BoxDetails } from "../api/boxes";
+import { getBox } from "../api/boxes";
+import { type BoxDetails } from "../types/Box";
 
 export default function BoxPage() {
   const [box, setBox] = useState<BoxDetails | null>(null);

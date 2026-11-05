@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link, useParams } from "react-router";
+import { useState, useEffect, use } from "react";
+import { Link, useParams, useSearchParams } from "react-router";
 import QuantityDialog from "../components/QuantityDialog";
-import type { Article } from "../types/Article";
-import useArticles from "../hooks/useArticles";
+import { type ArticleDetails, type Article } from "../types/Article";
+import { getArticle } from "../api/articles";
 
 type ArticlePageProps = {
   article: Article;
@@ -10,22 +10,49 @@ type ArticlePageProps = {
 
 export default function ArticlePage() {
   const { articleId } = useParams();
-  const { articles } = useArticles();
-
-  const article = articles.find((item) => String(item.id) === articleId);
+  const [searchParams] = useSearchParams();
+  const boxId = searchParams.get("boxId");
 
   // State
+  const [article, setArticle] = useState<ArticleDetails | null>(null);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [amount, setAmount] = useState("1");
   const [message, setMessage] = useState("");
   const [pendingAction, setPendingAction] = useState<"add" | "take" | null>(
     null,
   );
+  const selectedPlacement = boxId
+    ? article?.placements.find((placement) => placement.boxId === boxId)
+    : undefined;
 
-  // Använd det uppdaterade saldot om det finns, annars artikelns startsaldo.
-  const quantity = article
-    ? (quantities[String(article.id)] ?? article.quantity)
-    : 0;
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchArticle() {
+      setArticle(null);
+
+      if (!articleId) return;
+
+      try {
+        const fetchedArticle = await getArticle(articleId);
+
+        if (!ignore) {
+          setArticle(fetchedArticle);
+        }
+      } catch (error) {
+        if (!ignore) {
+          console.error("Kunde inte hämta artikeln:", error);
+          // Sätt eventuell feedback här.
+        }
+      }
+    }
+
+    void fetchArticle();
+
+    return () => {
+      ignore = true;
+    };
+  }, [articleId]);
 
   // Funktioner
   function openQuantityDialog(action: "add" | "take") {
@@ -39,35 +66,7 @@ export default function ArticlePage() {
     setMessage("");
   }
 
-  function changeStock(action: "add" | "take") {
-    if (!article) return;
-
-    const value = Number(amount);
-
-    if (!Number.isInteger(value) || value <= 0) {
-      setMessage("Ange ett positivt heltal.");
-      return;
-    }
-
-    if (action === "take" && value > quantity) {
-      setMessage("Det finns inte tillräckligt många i lager.");
-      return;
-    }
-
-    const articleId = String(article.id);
-
-    setQuantities((current) => {
-      const currentQuantity = current[articleId] ?? article.quantity;
-
-      return {
-        ...current,
-        [articleId]:
-          action === "add" ? currentQuantity + value : currentQuantity - value,
-      };
-    });
-
-    closeQuantityDialog();
-  }
+  function changeStock(action: "add" | "take") {}
 
   // Alla hooks ligger ovanför denna tidiga return.
   if (!article) {
@@ -94,15 +93,29 @@ export default function ArticlePage() {
       <div></div>
       <h2 className="mt-6 text-2xl font-semibold">{article.name}</h2>
 
-      <p className="mt-2 text-sm text-gray-500">
-        Artikelnummer: {article.id} · Kategori: {article.category.name}
-      </p>
+      <ul className="mt-2 text-sm text-gray-500">
+        {selectedPlacement && (
+          <li>
+            Hylla:
+            <span className="font-semibold underline">
+              {` ${selectedPlacement.box.shelf.name}`}
+            </span>
+            Fack:
+            <span className="font-semibold underline">
+              {selectedPlacement.box.name}
+            </span>
+          </li>
+        )}
+
+        <li>Artikelnummer: {article.id}</li>
+        <li>Kategori: {article.category.name}</li>
+      </ul>
 
       <div className="mt-6 flex items-center justify-between rounded-lg border border-gray-300 bg-gray-100 p-5">
-        <span>Lagersaldo</span>
+        <span>I denna låda:</span>
 
         <span className="text-3xl font-semibold tabular-nums">
-          {quantity} st
+          {selectedPlacement?.quantity} st
         </span>
       </div>
 

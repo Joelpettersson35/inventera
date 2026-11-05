@@ -1,24 +1,9 @@
-import type { Article } from "../types/Article";
-import type { BoxType } from "../types/BoxType";
+import type { Box } from "../types/Box";
 import { apiRequest } from "./client";
+import { type CreateBoxInput } from "../types/Box";
+import { type BoxDetails } from "../types/Box";
 
-export type CreateBoxInput = {
-  name: string;
-  shelfId: string;
-};
-
-export type BoxArticleType = {
-  boxId: string;
-  articleId: string;
-  quantity: number;
-  article: Article;
-};
-
-export type BoxDetails = BoxType & {
-  articles: BoxArticleType[];
-};
-
-export async function createBox(input: CreateBoxInput): Promise<BoxType> {
+export async function createBox(input: CreateBoxInput): Promise<Box> {
   return apiRequest("/box", {
     method: "POST",
     headers: {

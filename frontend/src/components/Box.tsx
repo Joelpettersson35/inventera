@@ -1,9 +1,9 @@
 import { Archive } from "lucide-react";
-import type { BoxType } from "../types/BoxType";
+import type { Box } from "../types/Box";
 import { Link } from "react-router";
 
 type BoxProps = {
-  box: BoxType;
+  box: Box;
 };
 
 export default function Box({ box }: BoxProps) {

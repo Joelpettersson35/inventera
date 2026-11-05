@@ -23,25 +23,61 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
     });
   });
 
-  // GET /api/articles/:id
-  app.get<{ Params: { id: string } }>("/:id", async (request, response) => {
-    const article = await prisma.article.findUnique({
-      where: {
-        id: request.params.id,
-      },
-      include: {
-        category: true,
-      },
-    });
+  // GET /api/article/:id
+  app.get<{ Params: { id: string } }>(
+    "/article/:id",
+    async (request, response) => {
+      const article = await prisma.article.findUnique({
+        where: {
+          id: request.params.id,
+        },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
 
-    if (!article) {
-      return response.code(404).send({
-        message: "Artikeln hittades inte.",
+              fields: {
+                select: {
+                  id: true,
+                  label: true,
+                },
+              },
+            },
+          },
+
+          placements: {
+            select: {
+              boxId: true,
+              quantity: true,
+
+              box: {
+                select: {
+                  id: true,
+                  name: true,
+
+                  shelf: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
-    }
 
-    return article;
-  });
+      if (!article) {
+        return response.code(404).send({
+          message: "Artikeln hittades inte.",
+        });
+      }
+
+      return article;
+    },
+  );
 
   // POST /api/article
   app.post<{ Body: CreateArticleBody }>(
@@ -152,10 +188,14 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
           value === null || // Fältet har uttryckligen inget värde.
           (typeof value === "string" && value.trim() === ""); // Fältet innehåller tom text eller bara whitespace.
 
-        if (isEmpty && field.required) {
-          return response
-            .code(400)
-            .send({ message: ` Fyll i "${field.label}"` });
+        if (isEmpty) {
+          if (field.required) {
+            return response.code(400).send({
+              message: `Fyll i "${field.label}".`,
+            });
+          }
+
+          continue;
         }
 
         switch (field.type) {

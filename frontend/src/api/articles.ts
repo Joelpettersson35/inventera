@@ -1,12 +1,8 @@
-import type { Article } from "../types/Article";
+import type { Article, ArticleDetails } from "../types/Article";
 import { apiRequest } from "./client";
+import { type CreateArticleInput } from "../types/Article";
 
-// Backend skapar artikelns id. Därför struntar vi i att skicka det
-export type CreateArticleInput = Omit<Article, "id" | "category">;
-
-export function createArticle(
-  article: CreateArticleInput,
-): Promise<Article> {
+export function createArticle(article: CreateArticleInput): Promise<Article> {
   return apiRequest<Article>("/article", {
     method: "POST",
     headers: {
@@ -16,9 +12,17 @@ export function createArticle(
   });
 }
 
-export function getArticles(
-): Promise<Article[]> {
+export function getArticles(): Promise<Article[]> {
   return apiRequest<Article[]>("/articles", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+export function getArticle(articleId: string): Promise<ArticleDetails> {
+  return apiRequest<ArticleDetails>(`/article/${articleId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

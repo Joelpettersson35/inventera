@@ -1,10 +1,9 @@
-import type { ShelfType } from "../types/ShelfType";
+import type { Shelf } from "../types/Shelf";
 import { apiRequest } from "./client";
+import { type CreateShelfInput } from "../types/Shelf";
 
-export type CreateShelfInput = Omit<ShelfType, "id" | "boxes">;
-
-export function createShelf(shelf: CreateShelfInput): Promise<ShelfType> {
-  return apiRequest<ShelfType>("/shelf", {
+export function createShelf(shelf: CreateShelfInput): Promise<Shelf> {
+  return apiRequest<Shelf>("/shelf", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,8 +12,8 @@ export function createShelf(shelf: CreateShelfInput): Promise<ShelfType> {
   });
 }
 
-export function getShelves(): Promise<ShelfType[]> {
-  return apiRequest<ShelfType[]>("/shelves", {
+export function getShelves(): Promise<Shelf[]> {
+  return apiRequest<Shelf[]>("/shelves", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

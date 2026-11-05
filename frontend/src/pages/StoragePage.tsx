@@ -5,7 +5,7 @@ import { createShelf, getShelves } from "../api/shelves";
 import { type Feedback } from "../types/Feedback";
 import { ApiError } from "../api/apiError";
 import Message from "../components/Message";
-import { type ShelfType } from "../types/ShelfType";
+import { type Shelf as ShelfType } from "../types/Shelf";
 import { createBox } from "../api/boxes";
 import Skeleton from "../components/Skeleton";
 

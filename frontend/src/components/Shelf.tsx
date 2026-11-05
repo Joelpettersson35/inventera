@@ -1,14 +1,14 @@
 import { ChevronDown } from "lucide-react";
 import { useState, useId, use } from "react";
 import Box from "./Box";
-import type { ShelfType } from "../types/ShelfType";
-import type { BoxType } from "../types/BoxType";
+import type { Shelf } from "../types/Shelf";
+import type { Box as BoxType } from "../types/Box";
 import BoxfDialog from "./BoxDialog";
 import type { Feedback } from "../types/Feedback";
 import Message from "./Message";
 
 type ShelfProps = {
-  shelf: ShelfType;
+  shelf: Shelf;
   onAdd: (shelfId: string, boxName: string) => Promise<boolean>;
 };
 
