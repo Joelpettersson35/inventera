@@ -82,7 +82,7 @@ export default function ArticlePage() {
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-3 py-6">
+    <section className="flex flex-wrap w-full px-4 py-6">
       <Link
         to="/storage"
         className="text-lg font-semibold text-[#001C89] hover:underline"
@@ -90,29 +90,31 @@ export default function ArticlePage() {
         <span className="text-2xl">←</span> Hyllor
       </Link>
 
-      <div></div>
-      <h2 className="mt-6 text-2xl font-semibold">{article.name}</h2>
-
-      <ul className="mt-2 text-sm text-gray-500">
-        {selectedPlacement && (
-          <li>
-            Hylla:
-            <span className="font-semibold underline">
-              {` ${selectedPlacement.box.shelf.name}`}
-            </span>
-            Fack:
-            <span className="font-semibold underline">
+      {selectedPlacement && (
+        <div className="flex w-full my-4 gap-x-2 border border-gray-300 bg-gray-100 p-2 rounded-xl items-center">
+          <p className="font-semibold">Placering: </p>
+          <div className="flex">
+            <p className="mr-1">Hylla</p>
+            <Link to="/storage" className="font-bold underline">
+              {selectedPlacement.box.shelf.name}
+            </Link>
+            <p className="mx-2">→</p>
+            <p className="mr-1">Låda</p>
+            <Link to="/storage" className="font-bold underline">
               {selectedPlacement.box.name}
-            </span>
-          </li>
-        )}
+            </Link>
+          </div>
+        </div>
+      )}
 
+      <h2 className="w-full text-2xl font-semibold">{article.name}</h2>
+      <ul className="w-full text-sm text-gray-500">
         <li>Artikelnummer: {article.id}</li>
         <li>Kategori: {article.category.name}</li>
       </ul>
 
-      <div className="mt-6 flex items-center justify-between rounded-lg border border-gray-300 bg-gray-100 p-5">
-        <span>I denna låda:</span>
+      <div className="mt-6 flex w-full items-center justify-between rounded-lg border border-gray-300 bg-gray-100 p-5">
+        <span className="text-lg">I denna låda:</span>
 
         <span className="text-3xl font-semibold tabular-nums">
           {selectedPlacement?.quantity} st

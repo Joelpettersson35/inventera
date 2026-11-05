@@ -36,7 +36,10 @@ export default function BoxPage() {
         <span className="text-2xl">←</span> Hyllor
       </Link>
 
-      <h1 className="w-full text-2xl text-center font-bold">{box?.name}</h1>
+      <h1 className="w-full text-2xl text-center font-bold">
+        {" "}
+        Låda: {box?.name}
+      </h1>
 
       <Link
         to={`/create?boxId=${boxId}`}
