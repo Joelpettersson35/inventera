@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router";
 import QuantityDialog from "../components/QuantityDialog";
 import { type ArticleDetails, type Article } from "../types/Article";
 import { getArticle } from "../api/articles";
+import { MoveRight } from "lucide-react";
 
 type ArticlePageProps = {
   article: Article;
@@ -84,41 +85,58 @@ export default function ArticlePage() {
   return (
     <section className="flex flex-wrap w-full px-4 py-6">
       <Link
-        to="/storage"
+        to={`/box/${selectedPlacement?.boxId}`}
         className="text-lg font-semibold text-[#001C89] hover:underline"
       >
-        <span className="text-2xl">←</span> Hyllor
+        <span className="text-2xl">←</span> {selectedPlacement?.box.name}
       </Link>
-
-      {selectedPlacement && (
-        <div className="flex w-full my-4 gap-x-2 border border-gray-300 bg-gray-100 p-2 rounded-xl items-center">
-          <p className="font-semibold">Placering: </p>
-          <div className="flex">
-            <p className="mr-1">Hylla</p>
-            <Link to="/storage" className="font-bold underline">
-              {selectedPlacement.box.shelf.name}
-            </Link>
-            <p className="mx-2">→</p>
-            <p className="mr-1">Låda</p>
-            <Link to="/storage" className="font-bold underline">
-              {selectedPlacement.box.name}
-            </Link>
-          </div>
-        </div>
-      )}
 
       <h2 className="w-full text-2xl font-semibold">{article.name}</h2>
       <ul className="w-full text-sm text-gray-500">
         <li>Artikelnummer: {article.id}</li>
         <li>Kategori: {article.category.name}</li>
+        {article.category.fields.map((field) => {
+          const value = article.attributes[field.id];
+          let displayValue = "Ej angivet";
+
+          if (typeof value === "boolean") {
+            displayValue = value ? "Ja" : "Nej";
+          } else if (typeof value === "string" || typeof value === "number") {
+            displayValue = value.toString();
+          }
+
+          return <li>{`${field.label}: ${displayValue}`}</li>;
+        })}
+        <li>Beskrivning: {article.description}</li>
       </ul>
 
-      <div className="mt-6 flex w-full items-center justify-between rounded-lg border border-gray-300 bg-gray-100 p-5">
-        <span className="text-lg">I denna låda:</span>
+      <div className="mt-6 flex flex-wrap w-full items-center rounded-lg border border-gray-300 bg-gray-100 px-5 pb-5">
+        {selectedPlacement && (
+          <div className="flex w-full gap-x-2 bg-gray-100 py-2 pr-2 border-b border-gray-300 items-center">
+            <p className="font-semibold">Placering: </p>
+            <div className="flex items-center">
+              <p className="mr-1">Hylla</p>
+              <Link to="/storage" className="font-bold underline">
+                {selectedPlacement.box.shelf.name}
+              </Link>
+              <MoveRight className="mx-2" />
+              <p className="mr-1">Låda</p>
+              <Link
+                to={`/box/${selectedPlacement.boxId}`}
+                className="font-bold underline"
+              >
+                {selectedPlacement.box.name}
+              </Link>
+            </div>
+          </div>
+        )}
+        <div className="flex w-full pt-2 justify-between items-center">
+          <span className="text-lg">Lådans saldo:</span>
 
-        <span className="text-3xl font-semibold tabular-nums">
-          {selectedPlacement?.quantity} st
-        </span>
+          <span className="text-3xl font-semibold tabular-nums">
+            {selectedPlacement?.quantity} st
+          </span>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-3">

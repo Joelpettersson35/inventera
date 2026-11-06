@@ -41,6 +41,7 @@ const articleRoutes: FastifyPluginAsync = async (app) => {
                 select: {
                   id: true,
                   label: true,
+                  type: true,
                 },
               },
             },

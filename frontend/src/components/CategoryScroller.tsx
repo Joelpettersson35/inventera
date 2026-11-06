@@ -15,7 +15,7 @@ export default function CategoryScroller({
     <div
       role="group"
       aria-label="Välj kategori"
-      className="flex gap-2 overflow-x-auto pb-2 justify-center-safe"
+      className="flex gap-2 overflow-x-auto py-2 justify-center-safe"
     >
       {categories.map((category) => (
         <button

@@ -1,3 +1,5 @@
+import type { CategoryField } from "./Category";
+
 export type Article = {
   id: string;
   name: string;
@@ -5,6 +7,7 @@ export type Article = {
   category: {
     id: string;
     name: string;
+    fields: CategoryField[];
   };
   attributes: Record<string, unknown>;
 };

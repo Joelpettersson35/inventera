@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import CategoryScroller from "../components/CategoryScroller";
 import { createArticle } from "../api/articles";
 import Message from "../components/Message";
@@ -8,6 +8,7 @@ import useCategories from "../hooks/useCategories";
 import Spinner from "../components/Spinner";
 import { ApiError } from "../api/apiError";
 import useArticles from "../hooks/useArticles";
+import { getCategories } from "../api/categories";
 
 type CreateArticleFormProps = {
   boxId: string | null;
@@ -17,16 +18,39 @@ export default function CreateArticleForm({ boxId }: CreateArticleFormProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState<Record<string, unknown>>({});
 
-  const { categories, isLoading, error } = useCategories();
   const { refreshArticles } = useArticles();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchCategories() {
+      setCategories([]);
+
+      try {
+        const categories = await getCategories();
+
+        if (!ignore) {
+          setCategories(categories);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        setError("FEL");
+      }
+    }
+
+    void fetchCategories();
+  }, []);
 
   function clearFields() {
     setName("");

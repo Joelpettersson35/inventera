@@ -24,6 +24,11 @@ export const boxRoutes: FastifyPluginAsync = async (app) => {
             },
           },
         },
+        shelf: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
